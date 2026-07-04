@@ -56,8 +56,21 @@ ballast/
 
 ```bash
 pip install -r requirements.txt
+```
 
+**Get the database** — either regenerate it (recommended; deterministic, ~5 s) or download the prebuilt copy:
+
+```bash
+# Option A — regenerate from the pinned seed (identical every time)
 python3 data/generate.py        # build ballast.db   (~5s, ~175 MB, ~5.5M rows)
+
+# Option B — download the prebuilt DB from the GitHub Release (no Python build)
+gh release download v0.1.0-data --repo hardik-kgp/ballast --dir data
+```
+
+Then:
+
+```bash
 python3 data/verify.py          # prove the golden traversal + 15/15 checks
 python3 data/build_manuals.py   # (re)generate the manual PDFs
 
@@ -65,6 +78,8 @@ python3 data/build_manuals.py   # (re)generate the manual PDFs
 python3 data/live_tick.py
 python3 data/live_tick.py --reset   # trim the live tail back to baseline
 ```
+
+> The DB is **not** committed to git (it's a 176 MB reproducible artifact). It's shipped as a **[GitHub Release asset](https://github.com/hardik-kgp/ballast/releases/tag/v0.1.0-data)** so the repo stays lean while the data stays one download away.
 
 ---
 
