@@ -10,12 +10,28 @@ data/generate.py:
 """
 import json
 import os
+import shutil
 import sqlite3
 from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.normpath(os.path.join(HERE, "..", "..", "data", "ballast.db"))
 OUT = os.path.normpath(os.path.join(HERE, "..", "src", "data", "feed.json"))
+MANUALS_SRC = os.path.normpath(os.path.join(HERE, "..", "..", "data", "manuals"))
+MANUALS_DST = os.path.normpath(os.path.join(HERE, "..", "public", "manuals"))
+
+SOP_BY_TYPE = {
+    "boiler_feed_pump": ("BFP O&M Manual", "BFP-OM-Manual.pdf"),
+    "cep": ("BFP O&M Manual", "BFP-OM-Manual.pdf"),
+    "cw_pump": ("BFP O&M Manual", "BFP-OM-Manual.pdf"),
+    "coal_mill": ("Coal Mill O&M Manual", "CoalMill-OM-Manual.pdf"),
+    "id_fan": ("Fan O&M Manual", "Fan-OM-Manual.pdf"),
+    "fd_fan": ("Fan O&M Manual", "Fan-OM-Manual.pdf"),
+    "pa_fan": ("Fan O&M Manual", "Fan-OM-Manual.pdf"),
+    "steam_turbine": ("Turbine-Generator O&M Manual", "TurbineGenerator-OM-Manual.pdf"),
+    "generator": ("Turbine-Generator O&M Manual", "TurbineGenerator-OM-Manual.pdf"),
+}
+CBM_SOP = ("CBM Vibration SOP (ISO 10816)", "CBM-Vibration-SOP.pdf")
 
 IST_OFFSET = 19800
 VIB_ALERT = 4.5
@@ -207,6 +223,110 @@ for a in alerts:
         }
     )
 
+equip_rows = q(
+    """SELECT e.equip_id, e.unit_id, e.name, e.tag_no, e.type, e.criticality, e.redundancy,
+              e.standby_equip_id
+       FROM equipment e WHERE e.monitored = 1 ORDER BY e.unit_id, e.equip_id"""
+)
+health_by_equip = {r["equip_id"]: r for r in health_rows}
+pred_by_equip = {p["equip_id"]: p for p in preds}
+next_pm = {
+    r["equip_id"]: r["due"]
+    for r in q(
+        """SELECT equip_id, MIN(next_due) AS due FROM work_orders
+           WHERE type = 'preventive' AND next_due IS NOT NULL GROUP BY equip_id"""
+    )
+}
+open_wo = {
+    r["equip_id"]: r
+    for r in q(
+        """SELECT wo_id, equip_id, type, status, priority, description FROM work_orders
+           WHERE status IN ('open', 'in_progress') ORDER BY created_ts"""
+    )
+}
+spare_by_equip = {
+    r["equip_id"]: r
+    for r in q(
+        """SELECT es.equip_id, si.part_id, si.name, si.on_hand_qty, si.lead_time_days,
+                  po.eta AS po_eta
+           FROM equipment_spares es
+           JOIN spares_inventory si ON si.part_id = es.part_id
+           LEFT JOIN purchase_orders po ON po.part_id = si.part_id AND po.status != 'received'
+           WHERE si.is_critical = 1"""
+    )
+}
+
+maintenance = []
+for e in equip_rows:
+    eid = e["equip_id"]
+    h = health_by_equip.get(eid, {})
+    p = pred_by_equip.get(eid)
+    standby_id = e["standby_equip_id"]
+    standby = None
+    if standby_id:
+        standby_wo = open_wo.get(standby_id)
+        standby = {"equipId": standby_id, "available": standby_wo is None}
+    wo = open_wo.get(eid)
+    sp = spare_by_equip.get(eid)
+    sop_title, sop_file = SOP_BY_TYPE.get(e["type"], CBM_SOP)
+    maintenance.append(
+        {
+            "equipId": eid,
+            "unitId": e["unit_id"],
+            "name": e["name"],
+            "type": e["type"],
+            "criticality": e["criticality"],
+            "redundancy": e["redundancy"],
+            "healthIndex": round(h.get("health_index") or 100),
+            "vibrationMmS": round(h.get("vibration_mm_s") or 0, 2),
+            "bearingTempC": round(h.get("bearing_temp_de_c") or 0, 1),
+            "prediction": (
+                {
+                    "rulDays": p["rul_days"],
+                    "confidencePct": p["confidence_pct"],
+                    "failureMode": p["failure_mode"],
+                    "rupeesAtRiskCr": round(p["rupees_at_risk"] / CRORE, 2),
+                    "recommendedAction": p["recommended_action"],
+                    "predictedFailureDate": p["predicted_failure_date"],
+                }
+                if p
+                else None
+            ),
+            "openWorkOrder": (
+                {
+                    "woId": wo["wo_id"],
+                    "type": wo["type"],
+                    "status": wo["status"],
+                    "priority": wo["priority"],
+                    "description": wo["description"],
+                }
+                if wo
+                else None
+            ),
+            "nextPmDue": next_pm.get(eid),
+            "spare": (
+                {
+                    "partId": sp["part_id"],
+                    "name": sp["name"],
+                    "onHandQty": sp["on_hand_qty"],
+                    "leadTimeDays": sp["lead_time_days"],
+                    "poEta": sp["po_eta"],
+                }
+                if sp
+                else None
+            ),
+            "standby": standby,
+            "sop": {"title": sop_title, "file": f"manuals/{sop_file}"},
+        }
+    )
+maintenance.sort(key=lambda m: m["healthIndex"])
+
+if os.path.isdir(MANUALS_SRC):
+    os.makedirs(MANUALS_DST, exist_ok=True)
+    for fname in os.listdir(MANUALS_SRC):
+        if fname.lower().endswith(".pdf"):
+            shutil.copy2(os.path.join(MANUALS_SRC, fname), os.path.join(MANUALS_DST, fname))
+
 kpi_load = sum(u["loadMw"] for u in unit_feed)
 kpi_declared = round(
     q("SELECT SUM(declared_capacity_mw) AS dc FROM commitments WHERE date = (SELECT MAX(date) FROM commitments)")[0]["dc"] or 0
@@ -274,6 +394,7 @@ feed = {
         else None
     ),
     "alerts": alert_feed,
+    "maintenance": maintenance,
 }
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
@@ -282,7 +403,8 @@ with open(OUT, "w", encoding="utf-8") as f:
 
 print(f"feed.json written: {OUT}")
 print(f"  units={len(unit_feed)} gen24h={len(generation24h)} vib={len(vibration_trend)} "
-      f"prices={len(market_prices_24h)} months={len(exposure_monthly)} alerts={len(alert_feed)}")
+      f"prices={len(market_prices_24h)} months={len(exposure_monthly)} alerts={len(alert_feed)} "
+      f"maintenance={len(maintenance)}")
 if golden_pred:
     print(f"  golden: {golden_pred['tag_no']} RUL {golden_pred['rul_days']}d "
           f"risk {golden_pred['rupees_at_risk'] / CRORE:.2f} Cr")

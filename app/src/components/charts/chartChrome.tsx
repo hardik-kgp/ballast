@@ -35,8 +35,10 @@ export function ChartTooltip({
 
 export function ChartLegend({
   items,
+  live,
 }: {
   items: { label: string; color: string; dashed?: boolean }[];
+  live?: boolean;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-1 pt-3">
@@ -56,6 +58,12 @@ export function ChartLegend({
           {item.label}
         </span>
       ))}
+      {live ? (
+        <span className="ml-auto inline-flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-emerald-700">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse-dot" />
+          Live
+        </span>
+      ) : null}
     </div>
   );
 }

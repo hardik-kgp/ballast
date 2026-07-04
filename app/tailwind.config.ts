@@ -75,11 +75,16 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.35" },
         },
+        "slide-in-right": {
+          from: { opacity: "0", transform: "translateX(24px)" },
+          to: { opacity: "1", transform: "translateX(0)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.45s cubic-bezier(0.4, 0, 0.2, 1) both",
         "fade-in": "fade-in 0.35s ease-out both",
         "pulse-dot": "pulse-dot 2s ease-in-out infinite",
+        "slide-in-right": "slide-in-right 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
     },
   },

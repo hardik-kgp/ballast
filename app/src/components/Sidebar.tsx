@@ -4,6 +4,7 @@ import {
   MessageSquare,
   PanelLeftClose,
   PanelLeftOpen,
+  Wrench,
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,11 +12,12 @@ import { FEED } from "@/data/feed";
 import { ALERTS } from "@/data/alerts";
 import { formatMW } from "@/lib/format";
 
-export type ViewId = "chat" | "dashboard" | "alerts";
+export type ViewId = "chat" | "dashboard" | "maintenance" | "alerts";
 
 const NAV_ITEMS: { id: ViewId; label: string; icon: typeof MessageSquare }[] = [
   { id: "chat", label: "Assistant", icon: MessageSquare },
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "maintenance", label: "Maintenance", icon: Wrench },
   { id: "alerts", label: "Alerts", icon: BellRing },
 ];
 

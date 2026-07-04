@@ -3,6 +3,7 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
+  LabelList,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -33,11 +34,13 @@ export function DynamicChart({
   columns,
   rows,
   height = 260,
+  showLabels = false,
 }: {
   chart: AskChart;
   columns: string[];
   rows: (string | number | null)[][];
   height?: number;
+  showLabels?: boolean;
 }) {
   const data = rows.map((row) => {
     const record: Record<string, string | number | null> = {};
@@ -55,11 +58,19 @@ export function DynamicChart({
   );
 
   const interval = Math.max(0, Math.ceil(data.length / 12) - 1);
+  // Value labels get unreadable on dense series; recharts also skips them on stacks.
+  const labelsOn = showLabels && data.length <= 30 && !chart.stacked;
+  const labelProps = {
+    position: "top" as const,
+    fontSize: 10,
+    fill: CHART_COLORS.axis,
+    formatter: (v: unknown) => (typeof v === "number" ? formatValue(v) : ""),
+  };
 
   return (
     <div>
       <ResponsiveContainer width="100%" height={height}>
-        <ComposedChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        <ComposedChart data={data} margin={{ top: labelsOn ? 18 : 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid stroke={CHART_COLORS.grid} strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey={chart.x} interval={interval} {...AXIS_PROPS} />
           <YAxis tickFormatter={(v: number) => formatValue(v)} width={52} {...AXIS_PROPS} />
@@ -83,7 +94,9 @@ export function DynamicChart({
                   fillOpacity={0.85}
                   barSize={Math.max(8, Math.min(34, Math.floor(560 / Math.max(1, data.length)))) }
                   radius={[3, 3, 0, 0]}
-                />
+                >
+                  {labelsOn ? <LabelList dataKey={key} {...labelProps} /> : null}
+                </Bar>
               );
             }
             if (chart.type === "area") {
@@ -98,7 +111,9 @@ export function DynamicChart({
                   fillOpacity={0.12}
                   dot={false}
                   activeDot={{ r: 4, strokeWidth: 0 }}
-                />
+                >
+                  {labelsOn ? <LabelList dataKey={key} {...labelProps} /> : null}
+                </Area>
               );
             }
             return (
@@ -110,7 +125,9 @@ export function DynamicChart({
                 strokeWidth={2.5}
                 dot={false}
                 activeDot={{ r: 4, strokeWidth: 0 }}
-              />
+              >
+                {labelsOn ? <LabelList dataKey={key} {...labelProps} /> : null}
+              </Line>
             );
           })}
         </ComposedChart>

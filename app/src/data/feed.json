@@ -691,5 +691,2604 @@
       "rupeesAtRiskCr": null,
       "minutesAgo": 240
     }
+  ],
+  "maintenance": [
+    {
+      "equipId": "VSTPS-U3-BFP-A",
+      "unitId": "VSTPS-U3",
+      "name": "Boiler Feed Pump A",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 34,
+      "vibrationMmS": 6.23,
+      "bearingTempC": 87.6,
+      "prediction": {
+        "rulDays": 5.0,
+        "confidencePct": 87.0,
+        "failureMode": "vibration_high",
+        "rupeesAtRiskCr": 4.76,
+        "recommendedAction": "Expedite thrust bearing SP-BRG-BFP-THR (14d lead — air-freight); return BFP-2C to service by closing WO; if unavailable, pre-emptively derate U3 to protect grid commitment.",
+        "predictedFailureDate": "2026-07-09"
+      },
+      "openWorkOrder": {
+        "woId": "WO-2026-01124",
+        "type": "predictive",
+        "status": "open",
+        "priority": "high",
+        "description": "Rising vibration trend on BFP-2A DE bearing — predicted failure ~5 days (Ballast)"
+      },
+      "nextPmDue": "2026-08-01",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "VSTPS-U3-BFP-C",
+        "available": false
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-MILL-C",
+      "unitId": "VSTPS-U1",
+      "name": "Coal Mill C",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 57,
+      "vibrationMmS": 4.77,
+      "bearingTempC": 81.2,
+      "prediction": {
+        "rulDays": 18.0,
+        "confidencePct": 72.0,
+        "failureMode": "vibration_high",
+        "rupeesAtRiskCr": 0.32,
+        "recommendedAction": "Monitor Mill-C vibration; schedule roll inspection at next reserve shutdown.",
+        "predictedFailureDate": "2026-07-22"
+      },
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-28",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-BFP-B",
+      "unitId": "VSTPS-U3",
+      "name": "Boiler Feed Pump B",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 88,
+      "vibrationMmS": 2.97,
+      "bearingTempC": 66.7,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-06",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-FDF-A",
+      "unitId": "VSTPS-U3",
+      "name": "Fd Fan A",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 88,
+      "vibrationMmS": 2.96,
+      "bearingTempC": 66.6,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-30",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U3-FDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-MILL-E",
+      "unitId": "CSTPS-U1",
+      "name": "Coal Mill E",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 89,
+      "vibrationMmS": 2.88,
+      "bearingTempC": 67.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-26",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-PAF-A",
+      "unitId": "CSTPS-U1",
+      "name": "Pa Fan A",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 89,
+      "vibrationMmS": 2.89,
+      "bearingTempC": 64.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-27",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U1-PAF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-CWP-B",
+      "unitId": "CSTPS-U2",
+      "name": "Cw Pump B",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 89,
+      "vibrationMmS": 2.91,
+      "bearingTempC": 66.4,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-28",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-CEP-A",
+      "unitId": "VSTPS-U1",
+      "name": "Cep A",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 89,
+      "vibrationMmS": 2.88,
+      "bearingTempC": 64.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-13",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U1-CEP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-CWP-B",
+      "unitId": "VSTPS-U3",
+      "name": "Cw Pump B",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 89,
+      "vibrationMmS": 2.87,
+      "bearingTempC": 65.9,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-12-16",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-CEP-A",
+      "unitId": "CSTPS-U2",
+      "name": "Cep A",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 90,
+      "vibrationMmS": 2.86,
+      "bearingTempC": 68.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-19",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U2-CEP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-GEN",
+      "unitId": "CSTPS-U2",
+      "name": "Generator",
+      "type": "generator",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 90,
+      "vibrationMmS": 2.85,
+      "bearingTempC": 66.6,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-11",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-CEP-B",
+      "unitId": "VSTPS-U1",
+      "name": "Cep B",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 90,
+      "vibrationMmS": 2.84,
+      "bearingTempC": 64.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-07",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-IDF-B",
+      "unitId": "VSTPS-U1",
+      "name": "Id Fan B",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 90,
+      "vibrationMmS": 2.82,
+      "bearingTempC": 64.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-28",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-MILL-D",
+      "unitId": "VSTPS-U2",
+      "name": "Coal Mill D",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 90,
+      "vibrationMmS": 2.86,
+      "bearingTempC": 64.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-12-13",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-MILL-E",
+      "unitId": "VSTPS-U2",
+      "name": "Coal Mill E",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 90,
+      "vibrationMmS": 2.78,
+      "bearingTempC": 68.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-10-21",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-PAF-B",
+      "unitId": "VSTPS-U3",
+      "name": "Pa Fan B",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 90,
+      "vibrationMmS": 2.78,
+      "bearingTempC": 67.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-07",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-CEP-B",
+      "unitId": "CSTPS-U1",
+      "name": "Cep B",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 91,
+      "vibrationMmS": 2.73,
+      "bearingTempC": 67.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-13",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-MILL-F",
+      "unitId": "CSTPS-U2",
+      "name": "Coal Mill F",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 91,
+      "vibrationMmS": 2.72,
+      "bearingTempC": 66.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-10-04",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-BFP-B",
+      "unitId": "VSTPS-U1",
+      "name": "Boiler Feed Pump B",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 91,
+      "vibrationMmS": 2.73,
+      "bearingTempC": 65.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-20",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-BFP-B",
+      "unitId": "VSTPS-U2",
+      "name": "Boiler Feed Pump B",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 91,
+      "vibrationMmS": 2.74,
+      "bearingTempC": 67.9,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-17",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-IDF-B",
+      "unitId": "VSTPS-U2",
+      "name": "Id Fan B",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 91,
+      "vibrationMmS": 2.73,
+      "bearingTempC": 64.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-26",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-MILL-F",
+      "unitId": "VSTPS-U2",
+      "name": "Coal Mill F",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 91,
+      "vibrationMmS": 2.73,
+      "bearingTempC": 64.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-08",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-PAF-A",
+      "unitId": "VSTPS-U2",
+      "name": "Pa Fan A",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 91,
+      "vibrationMmS": 2.71,
+      "bearingTempC": 65.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-10-17",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U2-PAF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-TG",
+      "unitId": "VSTPS-U3",
+      "name": "Steam Turbine",
+      "type": "steam_turbine",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 91,
+      "vibrationMmS": 2.76,
+      "bearingTempC": 67.6,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-17",
+      "spare": {
+        "partId": "SP-TG-BRG",
+        "name": "Turbine journal bearing",
+        "onHandQty": 1,
+        "leadTimeDays": 90,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-CWP-B",
+      "unitId": "CSTPS-U1",
+      "name": "Cw Pump B",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.69,
+      "bearingTempC": 66.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-10",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-FDF-A",
+      "unitId": "CSTPS-U1",
+      "name": "Fd Fan A",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.7,
+      "bearingTempC": 65.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-12-26",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U1-FDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-GEN",
+      "unitId": "CSTPS-U1",
+      "name": "Generator",
+      "type": "generator",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 92,
+      "vibrationMmS": 2.69,
+      "bearingTempC": 69.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-19",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-MILL-B",
+      "unitId": "CSTPS-U1",
+      "name": "Coal Mill B",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.64,
+      "bearingTempC": 65.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-13",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-PAF-B",
+      "unitId": "CSTPS-U1",
+      "name": "Pa Fan B",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.66,
+      "bearingTempC": 66.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-10-08",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-MILL-A",
+      "unitId": "CSTPS-U2",
+      "name": "Coal Mill A",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.67,
+      "bearingTempC": 66.9,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-20",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-MILL-C",
+      "unitId": "CSTPS-U2",
+      "name": "Coal Mill C",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.67,
+      "bearingTempC": 67.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-15",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-PAF-A",
+      "unitId": "CSTPS-U2",
+      "name": "Pa Fan A",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.65,
+      "bearingTempC": 67.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-20",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U2-PAF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-TG",
+      "unitId": "CSTPS-U2",
+      "name": "Steam Turbine",
+      "type": "steam_turbine",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 92,
+      "vibrationMmS": 2.64,
+      "bearingTempC": 66.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-12-05",
+      "spare": {
+        "partId": "SP-TG-BRG",
+        "name": "Turbine journal bearing",
+        "onHandQty": 1,
+        "leadTimeDays": 90,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-CWP-A",
+      "unitId": "VSTPS-U1",
+      "name": "Cw Pump A",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.67,
+      "bearingTempC": 64.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-26",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "VSTPS-U1-CWP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-MILL-E",
+      "unitId": "VSTPS-U1",
+      "name": "Coal Mill E",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.68,
+      "bearingTempC": 64.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-28",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-IDF-A",
+      "unitId": "VSTPS-U3",
+      "name": "Id Fan A",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.67,
+      "bearingTempC": 64.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-26",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U3-IDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-IDF-B",
+      "unitId": "VSTPS-U3",
+      "name": "Id Fan B",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.69,
+      "bearingTempC": 65.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-26",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-MILL-B",
+      "unitId": "VSTPS-U3",
+      "name": "Coal Mill B",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.69,
+      "bearingTempC": 64.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-06",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-MILL-C",
+      "unitId": "VSTPS-U3",
+      "name": "Coal Mill C",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.63,
+      "bearingTempC": 65.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-12-20",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-PAF-A",
+      "unitId": "VSTPS-U3",
+      "name": "Pa Fan A",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 92,
+      "vibrationMmS": 2.66,
+      "bearingTempC": 64.9,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-10-04",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U3-PAF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-FDF-B",
+      "unitId": "CSTPS-U1",
+      "name": "Fd Fan B",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.59,
+      "bearingTempC": 63.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-20",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-IDF-A",
+      "unitId": "CSTPS-U1",
+      "name": "Id Fan A",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.61,
+      "bearingTempC": 66.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-16",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U1-IDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-MILL-D",
+      "unitId": "CSTPS-U1",
+      "name": "Coal Mill D",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.6,
+      "bearingTempC": 67.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-30",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-MILL-F",
+      "unitId": "CSTPS-U1",
+      "name": "Coal Mill F",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.59,
+      "bearingTempC": 66.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-11",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-BFP-B",
+      "unitId": "CSTPS-U2",
+      "name": "Boiler Feed Pump B",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.61,
+      "bearingTempC": 67.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-24",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-BFP-C",
+      "unitId": "CSTPS-U2",
+      "name": "Boiler Feed Pump C",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.55,
+      "bearingTempC": 64.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-03",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-IDF-B",
+      "unitId": "CSTPS-U2",
+      "name": "Id Fan B",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.55,
+      "bearingTempC": 68.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-05",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-MILL-B",
+      "unitId": "CSTPS-U2",
+      "name": "Coal Mill B",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.61,
+      "bearingTempC": 66.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-08",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-PAF-B",
+      "unitId": "VSTPS-U1",
+      "name": "Pa Fan B",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.59,
+      "bearingTempC": 67.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-25",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-TG",
+      "unitId": "VSTPS-U1",
+      "name": "Steam Turbine",
+      "type": "steam_turbine",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 93,
+      "vibrationMmS": 2.54,
+      "bearingTempC": 64.6,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-14",
+      "spare": {
+        "partId": "SP-TG-BRG",
+        "name": "Turbine journal bearing",
+        "onHandQty": 1,
+        "leadTimeDays": 90,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-BFP-C",
+      "unitId": "VSTPS-U2",
+      "name": "Boiler Feed Pump C",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.61,
+      "bearingTempC": 65.7,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-21",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-CWP-A",
+      "unitId": "VSTPS-U2",
+      "name": "Cw Pump A",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.54,
+      "bearingTempC": 63.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-12",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "VSTPS-U2-CWP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-IDF-A",
+      "unitId": "VSTPS-U2",
+      "name": "Id Fan A",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.58,
+      "bearingTempC": 67.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-08",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U2-IDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-MILL-A",
+      "unitId": "VSTPS-U2",
+      "name": "Coal Mill A",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.58,
+      "bearingTempC": 66.6,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-17",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-MILL-C",
+      "unitId": "VSTPS-U2",
+      "name": "Coal Mill C",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.61,
+      "bearingTempC": 64.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-30",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-CWP-A",
+      "unitId": "VSTPS-U3",
+      "name": "Cw Pump A",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.58,
+      "bearingTempC": 65.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-10-25",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "VSTPS-U3-CWP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-FDF-B",
+      "unitId": "VSTPS-U3",
+      "name": "Fd Fan B",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.57,
+      "bearingTempC": 67.9,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-02",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-GEN",
+      "unitId": "VSTPS-U3",
+      "name": "Generator",
+      "type": "generator",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 93,
+      "vibrationMmS": 2.61,
+      "bearingTempC": 67.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-13",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-MILL-F",
+      "unitId": "VSTPS-U3",
+      "name": "Coal Mill F",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 93,
+      "vibrationMmS": 2.56,
+      "bearingTempC": 64.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-15",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-IDF-B",
+      "unitId": "CSTPS-U1",
+      "name": "Id Fan B",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.46,
+      "bearingTempC": 66.6,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-12-15",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-TG",
+      "unitId": "CSTPS-U1",
+      "name": "Steam Turbine",
+      "type": "steam_turbine",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 94,
+      "vibrationMmS": 2.47,
+      "bearingTempC": 68.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-21",
+      "spare": {
+        "partId": "SP-TG-BRG",
+        "name": "Turbine journal bearing",
+        "onHandQty": 1,
+        "leadTimeDays": 90,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-BFP-A",
+      "unitId": "CSTPS-U2",
+      "name": "Boiler Feed Pump A",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.51,
+      "bearingTempC": 68.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-30",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "CSTPS-U2-BFP-C",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-CWP-A",
+      "unitId": "CSTPS-U2",
+      "name": "Cw Pump A",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.46,
+      "bearingTempC": 66.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-25",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "CSTPS-U2-CWP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-FDF-A",
+      "unitId": "CSTPS-U2",
+      "name": "Fd Fan A",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.53,
+      "bearingTempC": 68.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-21",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U2-FDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-MILL-D",
+      "unitId": "CSTPS-U2",
+      "name": "Coal Mill D",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.5,
+      "bearingTempC": 66.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-21",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-MILL-D",
+      "unitId": "VSTPS-U1",
+      "name": "Coal Mill D",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.47,
+      "bearingTempC": 65.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-16",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-PAF-A",
+      "unitId": "VSTPS-U1",
+      "name": "Pa Fan A",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.45,
+      "bearingTempC": 63.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-20",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U1-PAF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-BFP-A",
+      "unitId": "VSTPS-U2",
+      "name": "Boiler Feed Pump A",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.51,
+      "bearingTempC": 66.1,
+      "prediction": {
+        "rulDays": 50.0,
+        "confidencePct": 45.0,
+        "failureMode": "bearing_failure",
+        "rupeesAtRiskCr": 0.0,
+        "recommendedAction": "Within normal range; continue condition-based monitoring.",
+        "predictedFailureDate": "2026-08-28"
+      },
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-07",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "VSTPS-U2-BFP-C",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-CWP-B",
+      "unitId": "VSTPS-U2",
+      "name": "Cw Pump B",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.48,
+      "bearingTempC": 64.4,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-14",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-FDF-B",
+      "unitId": "VSTPS-U2",
+      "name": "Fd Fan B",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.46,
+      "bearingTempC": 65.7,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-10",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-MILL-B",
+      "unitId": "VSTPS-U2",
+      "name": "Coal Mill B",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.53,
+      "bearingTempC": 65.9,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-05",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-MILL-E",
+      "unitId": "VSTPS-U3",
+      "name": "Coal Mill E",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 94,
+      "vibrationMmS": 2.52,
+      "bearingTempC": 65.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-29",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-BFP-A",
+      "unitId": "CSTPS-U1",
+      "name": "Boiler Feed Pump A",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.42,
+      "bearingTempC": 66.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-06",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "CSTPS-U1-BFP-C",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-CEP-A",
+      "unitId": "CSTPS-U1",
+      "name": "Cep A",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.4,
+      "bearingTempC": 67.4,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-30",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U1-CEP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-MILL-A",
+      "unitId": "CSTPS-U1",
+      "name": "Coal Mill A",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.42,
+      "bearingTempC": 65.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-08",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-MILL-E",
+      "unitId": "CSTPS-U2",
+      "name": "Coal Mill E",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.42,
+      "bearingTempC": 67.6,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-11",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-PAF-B",
+      "unitId": "CSTPS-U2",
+      "name": "Pa Fan B",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.41,
+      "bearingTempC": 66.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-16",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-CWP-B",
+      "unitId": "VSTPS-U1",
+      "name": "Cw Pump B",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.42,
+      "bearingTempC": 64.7,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-27",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-FDF-A",
+      "unitId": "VSTPS-U1",
+      "name": "Fd Fan A",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.43,
+      "bearingTempC": 65.7,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-23",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U1-FDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-IDF-A",
+      "unitId": "VSTPS-U1",
+      "name": "Id Fan A",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.42,
+      "bearingTempC": 67.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-21",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U1-IDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-CEP-B",
+      "unitId": "VSTPS-U2",
+      "name": "Cep B",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.44,
+      "bearingTempC": 65.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-18",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-TG",
+      "unitId": "VSTPS-U2",
+      "name": "Steam Turbine",
+      "type": "steam_turbine",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 95,
+      "vibrationMmS": 2.43,
+      "bearingTempC": 66.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-19",
+      "spare": {
+        "partId": "SP-TG-BRG",
+        "name": "Turbine journal bearing",
+        "onHandQty": 1,
+        "leadTimeDays": 90,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-BFP-C",
+      "unitId": "VSTPS-U3",
+      "name": "Boiler Feed Pump C",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.43,
+      "bearingTempC": 65.9,
+      "prediction": {
+        "rulDays": 51.0,
+        "confidencePct": 61.0,
+        "failureMode": "bearing_failure",
+        "rupeesAtRiskCr": 0.0,
+        "recommendedAction": "Within normal range; continue condition-based monitoring.",
+        "predictedFailureDate": "2026-08-21"
+      },
+      "openWorkOrder": {
+        "woId": "WO-2026-01123",
+        "type": "breakdown",
+        "status": "in_progress",
+        "priority": "high",
+        "description": "BFP-2C mechanical seal + bearing overhaul — standby unavailable"
+      },
+      "nextPmDue": "2026-08-01",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-MILL-D",
+      "unitId": "VSTPS-U3",
+      "name": "Coal Mill D",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 95,
+      "vibrationMmS": 2.39,
+      "bearingTempC": 65.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-08",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-BFP-C",
+      "unitId": "CSTPS-U1",
+      "name": "Boiler Feed Pump C",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 96,
+      "vibrationMmS": 2.33,
+      "bearingTempC": 68.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-05",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-CWP-A",
+      "unitId": "CSTPS-U1",
+      "name": "Cw Pump A",
+      "type": "cw_pump",
+      "criticality": "A",
+      "redundancy": "2x100%",
+      "healthIndex": 96,
+      "vibrationMmS": 2.32,
+      "bearingTempC": 68.8,
+      "prediction": {
+        "rulDays": 53.0,
+        "confidencePct": 61.0,
+        "failureMode": "bearing_failure",
+        "rupeesAtRiskCr": 0.0,
+        "recommendedAction": "Within normal range; continue condition-based monitoring.",
+        "predictedFailureDate": "2026-08-16"
+      },
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-12",
+      "spare": {
+        "partId": "SP-CWP-IMP",
+        "name": "CW pump impeller",
+        "onHandQty": 1,
+        "leadTimeDays": 60,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "CSTPS-U1-CWP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-CEP-B",
+      "unitId": "CSTPS-U2",
+      "name": "Cep B",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 96,
+      "vibrationMmS": 2.37,
+      "bearingTempC": 67.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-21",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-BFP-A",
+      "unitId": "VSTPS-U1",
+      "name": "Boiler Feed Pump A",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 96,
+      "vibrationMmS": 2.3,
+      "bearingTempC": 65.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-10-22",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": {
+        "equipId": "VSTPS-U1-BFP-C",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-MILL-A",
+      "unitId": "VSTPS-U1",
+      "name": "Coal Mill A",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 96,
+      "vibrationMmS": 2.34,
+      "bearingTempC": 65.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-08",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-PAF-B",
+      "unitId": "VSTPS-U2",
+      "name": "Pa Fan B",
+      "type": "pa_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 96,
+      "vibrationMmS": 2.29,
+      "bearingTempC": 65.7,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-19",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-MILL-A",
+      "unitId": "VSTPS-U3",
+      "name": "Coal Mill A",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 96,
+      "vibrationMmS": 2.33,
+      "bearingTempC": 65.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-11-28",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-BFP-B",
+      "unitId": "CSTPS-U1",
+      "name": "Boiler Feed Pump B",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.27,
+      "bearingTempC": 68.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-21",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U1-MILL-C",
+      "unitId": "CSTPS-U1",
+      "name": "Coal Mill C",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.28,
+      "bearingTempC": 66.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-16",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-FDF-B",
+      "unitId": "CSTPS-U2",
+      "name": "Fd Fan B",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.25,
+      "bearingTempC": 67.5,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-25",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-BFP-C",
+      "unitId": "VSTPS-U1",
+      "name": "Boiler Feed Pump C",
+      "type": "boiler_feed_pump",
+      "criticality": "A",
+      "redundancy": "3x50%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.25,
+      "bearingTempC": 66.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-26",
+      "spare": {
+        "partId": "SP-SEAL-BFP",
+        "name": "Mechanical seal cartridge, BFP",
+        "onHandQty": 3,
+        "leadTimeDays": 21,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-MILL-F",
+      "unitId": "VSTPS-U1",
+      "name": "Coal Mill F",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.23,
+      "bearingTempC": 64.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-21",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-CEP-A",
+      "unitId": "VSTPS-U2",
+      "name": "Cep A",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.27,
+      "bearingTempC": 64.3,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-12",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U2-CEP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-FDF-A",
+      "unitId": "VSTPS-U2",
+      "name": "Fd Fan A",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.26,
+      "bearingTempC": 66.4,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-08",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U2-FDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-CEP-A",
+      "unitId": "VSTPS-U3",
+      "name": "Cep A",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 97,
+      "vibrationMmS": 2.25,
+      "bearingTempC": 65.9,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-18",
+      "spare": null,
+      "standby": {
+        "equipId": "VSTPS-U3-CEP-B",
+        "available": true
+      },
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "CSTPS-U2-IDF-A",
+      "unitId": "CSTPS-U2",
+      "name": "Id Fan A",
+      "type": "id_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 98,
+      "vibrationMmS": 2.13,
+      "bearingTempC": 66.8,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-08-20",
+      "spare": null,
+      "standby": {
+        "equipId": "CSTPS-U2-IDF-B",
+        "available": true
+      },
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-GEN",
+      "unitId": "VSTPS-U1",
+      "name": "Generator",
+      "type": "generator",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 98,
+      "vibrationMmS": 2.21,
+      "bearingTempC": 66.0,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-04",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U2-GEN",
+      "unitId": "VSTPS-U2",
+      "name": "Generator",
+      "type": "generator",
+      "criticality": "A",
+      "redundancy": "none",
+      "healthIndex": 98,
+      "vibrationMmS": 2.21,
+      "bearingTempC": 65.1,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-22",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Turbine-Generator O&M Manual",
+        "file": "manuals/TurbineGenerator-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-FDF-B",
+      "unitId": "VSTPS-U1",
+      "name": "Fd Fan B",
+      "type": "fd_fan",
+      "criticality": "A",
+      "redundancy": "2x50%",
+      "healthIndex": 99,
+      "vibrationMmS": 2.09,
+      "bearingTempC": 67.7,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-12-09",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "Fan O&M Manual",
+        "file": "manuals/Fan-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U1-MILL-B",
+      "unitId": "VSTPS-U1",
+      "name": "Coal Mill B",
+      "type": "coal_mill",
+      "criticality": "B",
+      "redundancy": "6x20%",
+      "healthIndex": 99,
+      "vibrationMmS": 1.96,
+      "bearingTempC": 65.2,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-07-23",
+      "spare": {
+        "partId": "SP-MILL-ROLL",
+        "name": "Grinding roll, mill",
+        "onHandQty": 4,
+        "leadTimeDays": 45,
+        "poEta": null
+      },
+      "standby": null,
+      "sop": {
+        "title": "Coal Mill O&M Manual",
+        "file": "manuals/CoalMill-OM-Manual.pdf"
+      }
+    },
+    {
+      "equipId": "VSTPS-U3-CEP-B",
+      "unitId": "VSTPS-U3",
+      "name": "Cep B",
+      "type": "cep",
+      "criticality": "B",
+      "redundancy": "2x100%",
+      "healthIndex": 99,
+      "vibrationMmS": 1.98,
+      "bearingTempC": 67.4,
+      "prediction": null,
+      "openWorkOrder": null,
+      "nextPmDue": "2026-09-05",
+      "spare": null,
+      "standby": null,
+      "sop": {
+        "title": "BFP O&M Manual",
+        "file": "manuals/BFP-OM-Manual.pdf"
+      }
+    }
   ]
 }

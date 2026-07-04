@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowUp, BarChart3, Download, Maximize2, Sparkles, Table2 } from "lucide-react";
+import { ArrowUp, BarChart3, Download, PanelRightOpen, Sparkles, Table2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChartById } from "@/components/charts";
 import { DynamicChart } from "@/components/charts/DynamicChart";
+import { ArtifactPanel } from "@/components/ArtifactPanel";
+import { ResultTable } from "@/components/ResultTable";
 import { Card } from "@/components/ui/Card";
-import { Dialog } from "@/components/ui/Dialog";
 import { downloadChartPng, slugify } from "@/lib/downloadChart";
+import { feedSliceFor, type ArtifactData } from "@/lib/artifact";
 import { askBallast, type AskResponse } from "@/lib/askApi";
 import {
   SEED_MESSAGES,
@@ -19,24 +21,25 @@ interface Message extends ChatMessage {
   error?: boolean;
 }
 
+type OpenPanel = (data: ArtifactData) => void;
+
 function ArtifactShell({
   title,
   subtitle,
   footnote,
   icon,
   onDownload,
+  onOpenDetails,
   children,
-  expandedChildren,
 }: {
   title: string;
   subtitle: string;
   footnote: string;
   icon: ReactNode;
   onDownload?: () => void;
+  onOpenDetails: () => void;
   children: ReactNode;
-  expandedChildren: ReactNode;
 }) {
-  const [expanded, setExpanded] = useState(false);
   return (
     <Card className="mt-3 overflow-hidden">
       <header className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
@@ -52,11 +55,12 @@ function ArtifactShell({
         <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
-            aria-label="Expand artifact"
-            onClick={() => setExpanded(true)}
+            aria-label="Open details panel"
+            title="Open details panel"
+            onClick={onOpenDetails}
             className="rounded-md p-1.5 text-text-subtle transition-colors hover:bg-surface-overlay hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
+            <PanelRightOpen className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
           {onDownload ? (
             <button
@@ -74,16 +78,26 @@ function ArtifactShell({
       <footer className="border-t border-border bg-surface-raised px-4 py-2">
         <p className="break-all text-[11px] text-text-subtle">{footnote}</p>
       </footer>
-      <Dialog open={expanded} onClose={() => setExpanded(false)} title={title} subtitle={subtitle}>
-        {expandedChildren}
-        <p className="mt-3 break-all text-[11px] text-text-subtle">{footnote}</p>
-      </Dialog>
     </Card>
   );
 }
 
-function ScriptedArtifactCard({ artifact }: { artifact: ChatArtifact }) {
+function ScriptedArtifactCard({ artifact, onOpenPanel }: { artifact: ChatArtifact; onOpenPanel: OpenPanel }) {
   const chartRef = useRef<HTMLDivElement>(null);
+  const openDetails = () => {
+    const slice = feedSliceFor(artifact.chart);
+    onOpenPanel({
+      title: artifact.title,
+      subtitle: artifact.subtitle,
+      source: artifact.footnote,
+      sourceKind: "feed",
+      columns: slice.columns,
+      rows: slice.rows,
+      chart: null,
+      chartId: artifact.chart,
+      fileStem: slugify(artifact.title),
+    });
+  };
   return (
     <ArtifactShell
       title={artifact.title}
@@ -93,7 +107,7 @@ function ScriptedArtifactCard({ artifact }: { artifact: ChatArtifact }) {
       onDownload={() => {
         if (chartRef.current) void downloadChartPng(chartRef.current, slugify(artifact.title));
       }}
-      expandedChildren={<ChartById id={artifact.chart} height={440} />}
+      onOpenDetails={openDetails}
     >
       <div ref={chartRef} className="px-4 pb-3 pt-4">
         <ChartById id={artifact.chart} height={250} />
@@ -102,56 +116,29 @@ function ScriptedArtifactCard({ artifact }: { artifact: ChatArtifact }) {
   );
 }
 
-function ResultTable({
-  columns,
-  rows,
-  maxRows,
+function QueryArtifactCard({
+  query,
+  question,
+  onOpenPanel,
 }: {
-  columns: string[];
-  rows: (string | number | null)[][];
-  maxRows: number;
+  query: AskResponse;
+  question: string;
+  onOpenPanel: OpenPanel;
 }) {
-  const shown = rows.slice(0, maxRows);
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-left text-[12px]">
-        <thead>
-          <tr className="border-b border-border">
-            {columns.map((col) => (
-              <th
-                key={col}
-                className="whitespace-nowrap px-3 py-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-text-subtle"
-              >
-                {col.replace(/_/g, " ")}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {shown.map((row, i) => (
-            <tr key={i} className="border-b border-border/60 last:border-0">
-              {row.map((cell, j) => (
-                <td key={j} className="tabular max-w-[280px] truncate whitespace-nowrap px-3 py-1.5 text-text">
-                  {cell === null ? "-" : String(cell)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {rows.length > maxRows ? (
-        <p className="px-3 py-1.5 text-[11px] text-text-subtle">
-          Showing {maxRows} of {rows.length} rows
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function QueryArtifactCard({ query, question }: { query: AskResponse; question: string }) {
   const chartRef = useRef<HTMLDivElement>(null);
   const title = query.chart?.title || query.intent || "Query result";
   const subtitle = `${query.rows.length} rows · ${(query.elapsedMs / 1000).toFixed(1)}s · live SQL over ballast.db`;
+  const openDetails = () =>
+    onOpenPanel({
+      title,
+      subtitle,
+      source: query.sql,
+      sourceKind: "sql",
+      columns: query.columns,
+      rows: query.rows,
+      chart: query.chart,
+      fileStem: slugify(question),
+    });
   return (
     <ArtifactShell
       title={title}
@@ -171,14 +158,7 @@ function QueryArtifactCard({ query, question }: { query: AskResponse; question: 
             }
           : undefined
       }
-      expandedChildren={
-        <div className="space-y-4">
-          {query.chart ? (
-            <DynamicChart chart={query.chart} columns={query.columns} rows={query.rows} height={400} />
-          ) : null}
-          <ResultTable columns={query.columns} rows={query.rows} maxRows={100} />
-        </div>
-      }
+      onOpenDetails={openDetails}
     >
       {query.chart ? (
         <div ref={chartRef} className="px-4 pb-1 pt-4">
@@ -192,7 +172,15 @@ function QueryArtifactCard({ query, question }: { query: AskResponse; question: 
   );
 }
 
-function MessageBubble({ message, question }: { message: Message; question: string }) {
+function MessageBubble({
+  message,
+  question,
+  onOpenPanel,
+}: {
+  message: Message;
+  question: string;
+  onOpenPanel: OpenPanel;
+}) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end">
@@ -226,8 +214,12 @@ function MessageBubble({ message, question }: { message: Message; question: stri
             ))}
           </ul>
         ) : null}
-        {message.query ? <QueryArtifactCard query={message.query} question={question} /> : null}
-        {message.artifact ? <ScriptedArtifactCard artifact={message.artifact} /> : null}
+        {message.query ? (
+          <QueryArtifactCard query={message.query} question={question} onOpenPanel={onOpenPanel} />
+        ) : null}
+        {message.artifact ? (
+          <ScriptedArtifactCard artifact={message.artifact} onOpenPanel={onOpenPanel} />
+        ) : null}
       </div>
     </div>
   );
@@ -257,6 +249,7 @@ export function ChatView() {
   const [messages, setMessages] = useState<Message[]>(SEED_MESSAGES);
   const [draft, setDraft] = useState("");
   const [isThinking, setIsThinking] = useState(false);
+  const [panel, setPanel] = useState<ArtifactData | null>(null);
   const lastQuestion = useRef("query");
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -307,7 +300,8 @@ export function ChatView() {
   };
 
   return (
-    <div className="relative flex h-full flex-col">
+    <div className="flex h-full min-w-0">
+      <div className="relative flex h-full min-w-0 flex-1 flex-col">
       <header className="flex h-[60px] shrink-0 items-center justify-between border-b border-border bg-surface px-5">
         <div>
           <h1 className="heading-tight text-[14.5px] font-semibold text-text">
@@ -327,7 +321,11 @@ export function ChatView() {
               className="animate-fade-up"
               style={{ animationDelay: `${Math.min(index * 40, 240)}ms` }}
             >
-              <MessageBubble message={message} question={lastQuestion.current} />
+              <MessageBubble
+                message={message}
+                question={lastQuestion.current}
+                onOpenPanel={setPanel}
+              />
             </div>
           ))}
           {isThinking ? <TypingIndicator label="Writing SQL and querying the twin" /> : null}
@@ -390,6 +388,9 @@ export function ChatView() {
           </form>
         </div>
       </div>
+      </div>
+
+      {panel ? <ArtifactPanel data={panel} onClose={() => setPanel(null)} /> : null}
     </div>
   );
 }

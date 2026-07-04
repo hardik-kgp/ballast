@@ -3,6 +3,7 @@ import { Sidebar, type ViewId } from "@/components/Sidebar";
 import { AlertsView } from "@/views/AlertsView";
 import { ChatView } from "@/views/ChatView";
 import { DashboardView } from "@/views/DashboardView";
+import { MaintenanceView } from "@/views/MaintenanceView";
 
 export default function App() {
   const [view, setView] = useState<ViewId>("chat");
@@ -21,7 +22,13 @@ export default function App() {
           <ChatView />
         ) : (
           <div className="h-full overflow-y-auto">
-            {view === "dashboard" ? <DashboardView /> : <AlertsView />}
+            {view === "dashboard" ? (
+              <DashboardView />
+            ) : view === "maintenance" ? (
+              <MaintenanceView />
+            ) : (
+              <AlertsView />
+            )}
           </div>
         )}
       </main>

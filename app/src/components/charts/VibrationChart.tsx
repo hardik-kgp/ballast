@@ -8,10 +8,21 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { FEED } from "@/data/feed";
+import { FEED, type VibrationPoint } from "@/data/feed";
+import { useLiveSeries } from "@/hooks/useLiveSeries";
 import { AXIS_PROPS, CHART_COLORS } from "./chartTheme";
 import { ChartLegend } from "./chartChrome";
 import { buildTooltip } from "./buildTooltip";
+
+// The golden BFP is degrading: creep slowly upward with sensor noise, capped
+// just under the danger band so the story stays consistent with the feed.
+const ceiling = FEED.meta.vibDanger - 0.25;
+
+function resampleVibration(last: VibrationPoint): VibrationPoint {
+  const noise = (Math.random() * 2 - 1) * 0.05;
+  const next = Math.min(ceiling, last.vibMmS + 0.003 + noise);
+  return { ...last, vibMmS: Math.round(next * 100) / 100 };
+}
 
 const TooltipContent = buildTooltip((name, value) => {
   if (name === "vibMmS")
@@ -20,10 +31,11 @@ const TooltipContent = buildTooltip((name, value) => {
 });
 
 export function VibrationChart({ height = 260 }: { height?: number }) {
+  const data = useLiveSeries(FEED.vibrationTrend, resampleVibration);
   return (
     <div>
       <ResponsiveContainer width="100%" height={height}>
-        <ComposedChart data={FEED.vibrationTrend} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        <ComposedChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="vibFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={CHART_COLORS.amber} stopOpacity={0.28} />
@@ -70,10 +82,12 @@ export function VibrationChart({ height = 260 }: { height?: number }) {
             fill="url(#vibFill)"
             dot={false}
             activeDot={{ r: 4, strokeWidth: 0 }}
+            isAnimationActive={false}
           />
         </ComposedChart>
       </ResponsiveContainer>
       <ChartLegend
+        live
         items={[
           { label: "Overall vibration (mm/s, ISO 10816)", color: CHART_COLORS.amber },
           { label: "Alert band", color: CHART_COLORS.amber, dashed: true },

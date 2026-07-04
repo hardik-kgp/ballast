@@ -88,6 +88,49 @@ export interface FeedSpare {
   poStatus: string | null;
 }
 
+export interface MaintenancePrediction {
+  rulDays: number;
+  confidencePct: number;
+  failureMode: string;
+  rupeesAtRiskCr: number;
+  recommendedAction: string;
+  predictedFailureDate: string;
+}
+
+export interface MaintenanceWorkOrder {
+  woId: string;
+  type: string;
+  status: string;
+  priority: string;
+  description: string;
+}
+
+export interface MaintenanceSpare {
+  partId: string;
+  name: string;
+  onHandQty: number;
+  leadTimeDays: number;
+  poEta: string | null;
+}
+
+export interface FeedMaintenance {
+  equipId: string;
+  unitId: string;
+  name: string;
+  type: string;
+  criticality: string;
+  redundancy: string | null;
+  healthIndex: number;
+  vibrationMmS: number;
+  bearingTempC: number;
+  prediction: MaintenancePrediction | null;
+  openWorkOrder: MaintenanceWorkOrder | null;
+  nextPmDue: string | null;
+  spare: MaintenanceSpare | null;
+  standby: { equipId: string; available: boolean } | null;
+  sop: { title: string; file: string };
+}
+
 export interface Feed {
   meta: {
     operator: string;
@@ -116,6 +159,7 @@ export interface Feed {
   prediction: FeedPrediction | null;
   spare: FeedSpare | null;
   alerts: FeedAlert[];
+  maintenance: FeedMaintenance[];
 }
 
 export const FEED = feedJson as unknown as Feed;
