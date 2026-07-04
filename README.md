@@ -1,143 +1,131 @@
-# ⚓ Ballast
+# ⚓ Ballast — Runbook
 
-**The commercial brain for thermal power plants.** Ballast is a digital-twin intelligence layer that connects a power plant's siloed systems — asset health, maintenance, fuel, and grid commitments — so a single plain-English question returns a **rupee-quantified answer with a recommended action**.
+**The commercial brain for thermal power plants.** Ballast joins a plant's siloed systems (asset health, maintenance, fuel, grid commitments) so a plain-English question returns a rupee-quantified answer with a recommended action, rendered as a chart artifact.
 
-> *"BFP-2A vibration is rising — what's my exposure if it trips this week?"*
-> → **₹4.76 Cr** (capacity-charge under-recovery + DSM penalty + IEX replacement power), because the standby pump is down and the spare bearing is out of stock. **Recommendation:** expedite the bearing; pre-emptively derate to protect the grid commitment.
-
-No single system in a plant can answer that today — asset health lives in the historian/CMMS, the money lives in the commercial/scheduling systems. **Ballast owns the join.**
+This README is the runbook: clone → run → ask. For the product story and modeling depth see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DATA_MODEL.md](docs/DATA_MODEL.md), [docs/SCENARIOS.md](docs/SCENARIOS.md), and [data/README.md](data/README.md).
 
 ---
 
-## Why this exists
+## What runs where
 
-In Indian thermal power, downtime is not a soft "OTIF" score — it's a hard, regulator-defined loss in rupees (CERC Availability-Based Tariff). A unit tripping costs money three ways: lost capacity-charge recovery (PAF below NAPAF), Deviation Settlement Mechanism (DSM) penalties, and buying replacement power on the exchange (IEX) at a premium.
+| Piece | Path | Port | What it is |
+|---|---|---|---|
+| Data layer | `data/` | - | SQLite `ballast.db` (27 tables + 4 views, ~5.6M rows) + OEM manual PDFs |
+| Query service | `server/` | 8077 | FastAPI: LLM text-to-SQL over the DB, read-only, returns answer + chart spec |
+| Console app | `app/` | 5177 | Vite/React: chat with artifacts, live fleet dashboard, alerts queue |
 
-Incumbents (Siemens, GE Vernova, AVEVA, IBM Maximo) stop at *"this asset will probably fail."* Ballast translates that into **₹ commercial exposure** and a **dispatch decision**, and lets operators **run closer to capacity** with confidence. It consumes the incumbents' asset-health signals rather than competing with them.
+No Docker and no database server needed — SQLite is embedded, everything runs as local processes.
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for positioning and the modeling philosophy in depth.
+## Prerequisites
 
----
+- Python 3.11+ (`pip` on PATH)
+- Node 18+ (`npm` on PATH)
+- An **OpenRouter API key** (the only external dependency; used for the chat LLM)
 
-## What's in this repo
+## 1. Configure the .env
 
-This repository currently contains the **data layer** — the realistic, grounded substrate the intelligence layer is built on. It has two halves:
+Create a file named `.env` in the **repo root** (this folder, next to this README). It is git-ignored. One line is required:
 
-- **Structured** — `data/ballast.db`, a SQLite database of 27 tables + 4 views modelling 2 plants / 5 units, shaped as if streaming from three real source systems.
-- **Unstructured** — `data/manuals/*.pdf`, synthetic-but-grounded OEM manuals & O&M documents (the "why/authority" behind the numbers).
-
-Plus a live **real-time simulator** and a **semantic layer** (the harness that grounds an LLM/agent over the data).
-
-```
-ballast/
-├── README.md                  ← you are here
-├── LICENSE                    ← MIT (+ synthetic-data notice)
-├── requirements.txt           ← numpy, pandas, fpdf2
-├── docs/
-│   ├── ARCHITECTURE.md        ← modeling + simulation architecture, source-system model, positioning
-│   ├── DATA_MODEL.md          ← every table, column, grain and join documented
-│   └── SCENARIOS.md           ← the golden + secondary scenarios, and how to tune them
-└── data/
-    ├── README.md              ← data-layer quickstart
-    ├── schema.sql             ← 27 tables + 4 views, each tagged with source system + standard
-    ├── config.py              ← fleet definition + scenario knobs (tune here)
-    ├── generate.py            ← the generator (numpy/pandas, fixed seed)
-    ├── verify.py              ← golden-traversal proof + 15 integrity checks
-    ├── live_tick.py           ← real-time simulator (streams telemetry, fires alerts)
-    ├── build_manuals.py       ← generates the synthetic manual PDFs
-    ├── semantic_layer.json    ← LLM harness: tables/joins/₹ formulas/example Q→SQL
-    ├── manuals/*.pdf          ← 7 grounded manuals (unstructured data)
-    └── ballast.db             ← generated (git-ignored; rebuild anytime)
+```env
+OPENROUTER_API_KEY=sk-or-...
 ```
 
----
+Optional override (defaults to `openai/gpt-5.4`):
 
-## Quickstart
+```env
+BALLAST_LLM_MODEL=openai/gpt-5.4
+```
+
+## 2. Build the database (one time, ~2 min)
 
 ```bash
 pip install -r requirements.txt
+python data/generate.py              # builds data/ballast.db (~175 MB, fixed seed, deterministic)
+python data/verify.py                # optional: proves the golden traversal, 15/15 checks
+python -X utf8 app/scripts/export_feed.py   # writes app/src/data/feed.json for the dashboard
 ```
 
-**Get the database** — either regenerate it (recommended; deterministic, ~5 s) or download the prebuilt copy:
+> Windows note: use `python -X utf8` for scripts that print the ₹ symbol, otherwise the console codec may choke. If `generate.py` fails on epoch math, confirm `pandas<3` is installed (pinned in `requirements.txt`).
+
+## 3. Start the query service
 
 ```bash
-# Option A — regenerate from the pinned seed (identical every time)
-python3 data/generate.py        # build ballast.db   (~5s, ~175 MB, ~5.5M rows)
-
-# Option B — download the prebuilt DB from the GitHub Release (no Python build)
-gh release download v0.1.0-data --repo hardik-kgp/ballast --dir data
+cd server
+pip install -r requirements.txt
+python run_local.py --env-file ../.env --port 8077
 ```
 
-Then:
+Check it: `http://localhost:8077/healthz` should report `"status": "ok"` and the model name.
+
+## 4. Start the console
 
 ```bash
-python3 data/verify.py          # prove the golden traversal + 15/15 checks
-python3 data/build_manuals.py   # (re)generate the manual PDFs
-
-# watch the twin come alive — BFP-2A vibration climbs, DANGER alert fires:
-python3 data/live_tick.py
-python3 data/live_tick.py --reset   # trim the live tail back to baseline
+cd app
+npm install
+npm run dev
 ```
 
-> The DB is **not** committed to git (it's a 176 MB reproducible artifact). It's shipped as a **[GitHub Release asset](https://github.com/hardik-kgp/ballast/releases/tag/v0.1.0-data)** so the repo stays lean while the data stays one download away.
+Open **http://localhost:5177**. The app proxies `/api` to the query service, so chat answers are live SQL over `ballast.db`.
 
----
+## 5. Optional: make the twin tick
 
-## Architecture at a glance
-
-```
-              SOURCE SYSTEMS  (mocked as if already connected)
-   ┌───────────────────┬──────────────────┬───────────────────────┐
-   │  DCS + Historian  │    CMMS / EAM    │  Commercial / Market   │
-   │  Emerson Ovation, │   SAP PM,        │  RLDC/SLDC, REMC,      │
-   │  OSIsoft/AVEVA PI │   IBM Maximo      │  IEX / PXIL            │
-   └─────────┬─────────┴────────┬─────────┴───────────┬───────────┘
-             │                  │                     │
-             ▼                  ▼                     ▼
-   ┌─────────────────────────────────────────────────────────────┐
-   │                 BALLAST DATA LAYER  (this repo)               │
-   │  structured   →  ballast.db : 27 tables + 4 views (SQLite)    │
-   │  unstructured →  manuals/*.pdf : OEM/O&M documents            │
-   │  harness      →  semantic_layer.json : join graph + ₹ formulas│
-   │  live         →  live_tick.py : real-time stream + alerts     │
-   └───────────────────────────────┬─────────────────────────────┘
-                                    │
-                                    ▼
-   ┌─────────────────────────────────────────────────────────────┐
-   │        INTELLIGENCE LAYER  (next)                            │
-   │  agent grounds on the DB + retrieves from manuals →          │
-   │  cited, widget-rendered answers ("answer = artifact")        │
-   └─────────────────────────────────────────────────────────────┘
+```bash
+python data/live_tick.py             # streams 1-min telemetry, advances the clock, escalates alerts
+python data/live_tick.py --reset     # trim the live tail back to baseline
+python -X utf8 app/scripts/export_feed.py   # re-export so the dashboard picks up the new state
 ```
 
-**The thesis in one line:** no single source system can answer the golden query alone; Ballast is the layer that joins asset health → production → grid commitment → rupees, and cites the manual that proves the call.
+## Troubleshooting
 
----
-
-## Grounded to real standards
-
-Nothing is invented; every table maps to an industry standard:
-
-| Standard | What it grounds |
+| Symptom | Fix |
 |---|---|
-| **ISO 14224** | equipment taxonomy + failure-mode / mechanism vocabulary |
-| **NERC GADS / IEEE 762** | availability & reliability metrics (EAF / EFOR / EFORd), outage event classes |
-| **CERC ABT (Tariff Regs 2024)** | capacity-charge recovery vs NAPAF, Deviation Settlement Mechanism |
-| **CEA / PAT** | performance norms — heat rate, PLF, aux consumption, specific coal |
-| **CPCB / MoEF 2015** | CEMS emission limits (SOx / NOx / SPM / CO₂) |
-| **AVEVA / OSIsoft PI** | tag catalog + tiered raw/rollup historian storage |
+| Chat says "query service did not answer" | Start step 3; confirm `/healthz` returns ok |
+| `503 OPENROUTER_API_KEY is not configured` | `.env` missing/misnamed key, or wrong `--env-file` path |
+| `UnicodeEncodeError ... '\u20b9'` on Windows | Run the script with `python -X utf8` |
+| `UNIQUE constraint failed: telemetry_1min...` in generate | `pip install "pandas>=2.0,<3"` and regenerate |
+| Dashboard shows stale numbers after regenerating the DB | Re-run `app/scripts/export_feed.py`, then hard-refresh |
+| Port 5177 or 8077 already in use | Pass `--port` to `run_local.py` / edit `app/vite.config.ts` proxy target together |
 
 ---
 
-## Important: this is synthetic data
+## 10 most impactful questions to ask the chat
 
-All plants, units, equipment, telemetry, commercial figures, and manuals are **synthetic**, generated from a fixed random seed. They are shaped to be realistic and grounded in public standards, but represent **no real plant, company, or proprietary OEM manual**. Rupee figures (AFC, the ₹4.76 Cr projection) are **modeled estimates**, not audited values. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#modeling-caveats) for the full list of modeling assumptions.
+These exercise the cross-system joins no single plant system can answer alone. The first one is the golden scenario.
+
+1. **"BFP-2A vibration is rising — what is my exposure if it trips this week?"** — health → standby down → spare stockout → PAF margin → **₹4.76 Cr**.
+2. **"Which equipment is closest to failure and what is the rupee exposure if it trips?"** — fleet-wide health ranking joined to failure predictions.
+3. **"Does BFP-2A have a healthy standby, and is the spare bearing in stock?"** — redundancy + CMMS work orders + inventory + PO ETA in one answer.
+4. **"Show the PAF vs NAPAF trend for VSTPS-U3 over the last 30 days."** — how thin the availability margin above the capacity-charge floor really is.
+5. **"How much have we lost to unplanned outages in the last 90 days, by unit?"** — the ₹ leak split into capacity charge lost, DSM, and RTM replacement.
+6. **"How much money did we lose to DSM penalties per month, by unit?"** — schedule-discipline trend, the recurring bleed.
+7. **"What is replacement power costing on the exchange right now vs the evening peak?"** — DAM/RTM price curves; why an unplanned trip buys at the worst hours.
+8. **"Coal stock status by plant — who is below the 4-day critical line?"** — CSTPS at 3.4 days; derating risk before it happens.
+9. **"Which units are trending toward a CPCB emission limit?"** — NOx creep vs the 300 mg/Nm³ stack limit.
+10. **"Which unit had the worst heat rate deviation last week and what is that costing in extra coal?"** — efficiency drift translated into fuel money.
 
 ---
 
-## Status & roadmap
+## Repo map
 
-- ✅ **Data layer** — structured DB + unstructured manuals + live simulator + semantic layer
-- ✅ **Intelligence layer** — `server/`: grounded text-to-SQL query service over the DB (semantic layer + DDL grounding, read-only guards, chart suggestions)
-- ✅ **App layer** — `app/`: the console (chat with "answer = artifact" widgets, live fleet dashboard, alerts queue)
-- ⬜ **Manual retrieval** — cite the OEM/O&M manuals alongside DB answers
+```
+ballast/
+├── README.md              ← this runbook
+├── .env                   ← you create this (git-ignored): OPENROUTER_API_KEY
+├── requirements.txt       ← data-layer deps (numpy, pandas<3, fpdf2)
+├── data/                  ← schema, generator, verifier, live simulator, semantic layer, manuals
+├── server/                ← FastAPI query service (LLM text-to-SQL, read-only guards)
+├── app/                   ← Vite/React console (chat + dashboard + alerts)
+└── docs/                  ← architecture, data model, scenarios
+```
+
+## Status
+
+- ✅ Data layer — structured DB + manuals + live simulator + semantic layer
+- ✅ Intelligence layer — grounded text-to-SQL query service (`server/`)
+- ✅ App layer — console with "answer = artifact" chat, live dashboard, alerts (`app/`)
+- ⬜ Manual retrieval — cite the OEM/O&M PDFs alongside DB answers
+- ⬜ Chat streaming — token-by-token SSE responses
+
+## Synthetic-data notice
+
+All plants, units, telemetry, commercial figures, and manuals are synthetic, generated from a fixed seed, grounded in public standards (ISO 14224, NERC GADS/IEEE 762, CERC ABT 2024, CEA/PAT, CPCB). They represent no real plant or proprietary document. MIT licensed — see [LICENSE](LICENSE).
