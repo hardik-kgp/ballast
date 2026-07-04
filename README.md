@@ -137,6 +137,7 @@ All plants, units, equipment, telemetry, commercial figures, and manuals are **s
 
 ## Status & roadmap
 
-- ✅ **Data layer** — structured DB + unstructured manuals + live simulator + semantic layer (this repo)
-- ⬜ **Intelligence layer** — agent over DB + manual retrieval → cited answers
-- ⬜ **App layer** — the live twin dashboard, command bar, "answer = artifact" widgets, mocked "Connected Sources" panel
+- ✅ **Data layer** — structured DB + unstructured manuals + live simulator + semantic layer
+- ✅ **Intelligence layer** — `server/`: grounded text-to-SQL query service over the DB (semantic layer + DDL grounding, read-only guards, chart suggestions)
+- ✅ **App layer** — `app/`: the console (chat with "answer = artifact" widgets, live fleet dashboard, alerts queue)
+- ⬜ **Manual retrieval** — cite the OEM/O&M manuals alongside DB answers

@@ -1,81 +1,198 @@
-import { useEffect, useRef, useState } from "react";
-import { ArrowUp, BarChart3, Download, Maximize2, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowUp, BarChart3, Download, Maximize2, Sparkles, Table2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChartById } from "@/components/charts";
+import { DynamicChart } from "@/components/charts/DynamicChart";
 import { Card } from "@/components/ui/Card";
 import { Dialog } from "@/components/ui/Dialog";
 import { downloadChartPng, slugify } from "@/lib/downloadChart";
+import { askBallast, type AskResponse } from "@/lib/askApi";
 import {
-  FOLLOW_UP_RESPONSES,
   SEED_MESSAGES,
   SUGGESTED_PROMPTS,
   type ChatArtifact,
   type ChatMessage,
 } from "@/data/chat";
 
-function ArtifactCard({ artifact }: { artifact: ChatArtifact }) {
-  const chartRef = useRef<HTMLDivElement>(null);
+interface Message extends ChatMessage {
+  query?: AskResponse;
+  error?: boolean;
+}
+
+function ArtifactShell({
+  title,
+  subtitle,
+  footnote,
+  icon,
+  onDownload,
+  children,
+  expandedChildren,
+}: {
+  title: string;
+  subtitle: string;
+  footnote: string;
+  icon: ReactNode;
+  onDownload?: () => void;
+  children: ReactNode;
+  expandedChildren: ReactNode;
+}) {
   const [expanded, setExpanded] = useState(false);
-
-  const handleDownload = () => {
-    if (chartRef.current) {
-      void downloadChartPng(chartRef.current, slugify(artifact.title));
-    }
-  };
-
   return (
     <Card className="mt-3 overflow-hidden">
       <header className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
         <div className="flex min-w-0 items-start gap-2.5">
           <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
-            <BarChart3 className="h-4 w-4" aria-hidden="true" />
+            {icon}
           </span>
           <div className="min-w-0">
-            <h4 className="heading-tight truncate text-[13.5px] font-semibold text-text">
-              {artifact.title}
-            </h4>
-            <p className="mt-0.5 text-xs text-text-muted">{artifact.subtitle}</p>
+            <h4 className="heading-tight truncate text-[13.5px] font-semibold text-text">{title}</h4>
+            <p className="mt-0.5 text-xs text-text-muted">{subtitle}</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
-            aria-label="Expand chart"
+            aria-label="Expand artifact"
             onClick={() => setExpanded(true)}
             className="rounded-md p-1.5 text-text-subtle transition-colors hover:bg-surface-overlay hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
-          <button
-            type="button"
-            aria-label="Download chart as PNG"
-            onClick={handleDownload}
-            className="rounded-md p-1.5 text-text-subtle transition-colors hover:bg-surface-overlay hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <Download className="h-3.5 w-3.5" aria-hidden="true" />
-          </button>
+          {onDownload ? (
+            <button
+              type="button"
+              aria-label="Download chart as PNG"
+              onClick={onDownload}
+              className="rounded-md p-1.5 text-text-subtle transition-colors hover:bg-surface-overlay hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Download className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          ) : null}
         </div>
       </header>
-      <div ref={chartRef} className="px-4 pb-3 pt-4">
-        <ChartById id={artifact.chart} height={250} />
-      </div>
+      {children}
       <footer className="border-t border-border bg-surface-raised px-4 py-2">
-        <p className="text-[11px] text-text-subtle">{artifact.footnote}</p>
+        <p className="break-all text-[11px] text-text-subtle">{footnote}</p>
       </footer>
-      <Dialog
-        open={expanded}
-        onClose={() => setExpanded(false)}
-        title={artifact.title}
-        subtitle={artifact.subtitle}
-      >
-        <ChartById id={artifact.chart} height={440} />
-        <p className="mt-3 text-[11px] text-text-subtle">{artifact.footnote}</p>
+      <Dialog open={expanded} onClose={() => setExpanded(false)} title={title} subtitle={subtitle}>
+        {expandedChildren}
+        <p className="mt-3 break-all text-[11px] text-text-subtle">{footnote}</p>
       </Dialog>
     </Card>
   );
 }
 
-function MessageBubble({ message }: { message: ChatMessage }) {
+function ScriptedArtifactCard({ artifact }: { artifact: ChatArtifact }) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  return (
+    <ArtifactShell
+      title={artifact.title}
+      subtitle={artifact.subtitle}
+      footnote={artifact.footnote}
+      icon={<BarChart3 className="h-4 w-4" aria-hidden="true" />}
+      onDownload={() => {
+        if (chartRef.current) void downloadChartPng(chartRef.current, slugify(artifact.title));
+      }}
+      expandedChildren={<ChartById id={artifact.chart} height={440} />}
+    >
+      <div ref={chartRef} className="px-4 pb-3 pt-4">
+        <ChartById id={artifact.chart} height={250} />
+      </div>
+    </ArtifactShell>
+  );
+}
+
+function ResultTable({
+  columns,
+  rows,
+  maxRows,
+}: {
+  columns: string[];
+  rows: (string | number | null)[][];
+  maxRows: number;
+}) {
+  const shown = rows.slice(0, maxRows);
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left text-[12px]">
+        <thead>
+          <tr className="border-b border-border">
+            {columns.map((col) => (
+              <th
+                key={col}
+                className="whitespace-nowrap px-3 py-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-text-subtle"
+              >
+                {col.replace(/_/g, " ")}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {shown.map((row, i) => (
+            <tr key={i} className="border-b border-border/60 last:border-0">
+              {row.map((cell, j) => (
+                <td key={j} className="tabular max-w-[280px] truncate whitespace-nowrap px-3 py-1.5 text-text">
+                  {cell === null ? "-" : String(cell)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {rows.length > maxRows ? (
+        <p className="px-3 py-1.5 text-[11px] text-text-subtle">
+          Showing {maxRows} of {rows.length} rows
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function QueryArtifactCard({ query, question }: { query: AskResponse; question: string }) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const title = query.chart?.title || query.intent || "Query result";
+  const subtitle = `${query.rows.length} rows · ${(query.elapsedMs / 1000).toFixed(1)}s · live SQL over ballast.db`;
+  return (
+    <ArtifactShell
+      title={title}
+      subtitle={subtitle}
+      footnote={query.sql}
+      icon={
+        query.chart ? (
+          <BarChart3 className="h-4 w-4" aria-hidden="true" />
+        ) : (
+          <Table2 className="h-4 w-4" aria-hidden="true" />
+        )
+      }
+      onDownload={
+        query.chart
+          ? () => {
+              if (chartRef.current) void downloadChartPng(chartRef.current, slugify(question));
+            }
+          : undefined
+      }
+      expandedChildren={
+        <div className="space-y-4">
+          {query.chart ? (
+            <DynamicChart chart={query.chart} columns={query.columns} rows={query.rows} height={400} />
+          ) : null}
+          <ResultTable columns={query.columns} rows={query.rows} maxRows={100} />
+        </div>
+      }
+    >
+      {query.chart ? (
+        <div ref={chartRef} className="px-4 pb-1 pt-4">
+          <DynamicChart chart={query.chart} columns={query.columns} rows={query.rows} height={240} />
+        </div>
+      ) : null}
+      <div className={cn("pb-2", query.chart && "border-t border-border/60 pt-1")}>
+        <ResultTable columns={query.columns} rows={query.rows} maxRows={6} />
+      </div>
+    </ArtifactShell>
+  );
+}
+
+function MessageBubble({ message, question }: { message: Message; question: string }) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end">
@@ -91,7 +208,14 @@ function MessageBubble({ message }: { message: ChatMessage }) {
         <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
       </span>
       <div className="min-w-0 max-w-[calc(100%-40px)] flex-1">
-        <p className="text-[14px] leading-[1.65] text-text">{message.content}</p>
+        <p
+          className={cn(
+            "text-[14px] leading-[1.65]",
+            message.error ? "text-rose-700" : "text-text"
+          )}
+        >
+          {message.content}
+        </p>
         {message.highlights ? (
           <ul className="mt-3 space-y-1.5">
             {message.highlights.map((point) => (
@@ -102,19 +226,20 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             ))}
           </ul>
         ) : null}
-        {message.artifact ? <ArtifactCard artifact={message.artifact} /> : null}
+        {message.query ? <QueryArtifactCard query={message.query} question={question} /> : null}
+        {message.artifact ? <ScriptedArtifactCard artifact={message.artifact} /> : null}
       </div>
     </div>
   );
 }
 
-function TypingIndicator() {
+function TypingIndicator({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3" role="status" aria-label="Assistant is responding">
       <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent/10 text-accent">
         <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
       </span>
-      <span className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-2">
+      <span className="flex items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-2">
         {[0, 1, 2].map((i) => (
           <span
             key={i}
@@ -122,16 +247,17 @@ function TypingIndicator() {
             style={{ animation: `pulse-dot 1.2s ease-in-out ${i * 0.18}s infinite` }}
           />
         ))}
+        <span className="text-[11.5px] text-text-subtle">{label}</span>
       </span>
     </div>
   );
 }
 
 export function ChatView() {
-  const [messages, setMessages] = useState<ChatMessage[]>(SEED_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>(SEED_MESSAGES);
   const [draft, setDraft] = useState("");
   const [isThinking, setIsThinking] = useState(false);
-  const followUpIndex = useRef(0);
+  const lastQuestion = useRef("query");
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -146,21 +272,38 @@ export function ChatView() {
     el.style.height = `${Math.min(el.scrollHeight, 144)}px`;
   }, [draft]);
 
-  const send = (text: string) => {
+  const send = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isThinking) return;
     setDraft("");
-    setMessages((prev) => [
-      ...prev,
-      { id: `u-${Date.now()}`, role: "user", content: trimmed },
-    ]);
+    lastQuestion.current = trimmed;
+    setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: "user", content: trimmed }]);
     setIsThinking(true);
-    const reply = FOLLOW_UP_RESPONSES[followUpIndex.current % FOLLOW_UP_RESPONSES.length];
-    followUpIndex.current += 1;
-    window.setTimeout(() => {
-      setMessages((prev) => [...prev, { ...reply, id: `a-${Date.now()}` }]);
+    try {
+      const result = await askBallast(trimmed);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `a-${Date.now()}`,
+          role: "assistant",
+          content: result.answer,
+          highlights: result.highlights.length ? result.highlights : undefined,
+          query: result,
+        },
+      ]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `e-${Date.now()}`,
+          role: "assistant",
+          content: `The query service did not answer: ${err instanceof Error ? err.message : String(err)}. Start it with "python server/run_local.py" and try again.`,
+          error: true,
+        },
+      ]);
+    } finally {
       setIsThinking(false);
-    }, 1400);
+    }
   };
 
   return (
@@ -171,7 +314,7 @@ export function ChatView() {
             Operations Assistant
           </h1>
           <p className="mt-0.5 text-[11.5px] text-text-subtle">
-            Grounded in the plant data layer: telemetry, maintenance, commercial
+            Live SQL over the plant data layer: telemetry, maintenance, commercial
           </p>
         </div>
       </header>
@@ -184,10 +327,10 @@ export function ChatView() {
               className="animate-fade-up"
               style={{ animationDelay: `${Math.min(index * 40, 240)}ms` }}
             >
-              <MessageBubble message={message} />
+              <MessageBubble message={message} question={lastQuestion.current} />
             </div>
           ))}
-          {isThinking ? <TypingIndicator /> : null}
+          {isThinking ? <TypingIndicator label="Writing SQL and querying the twin" /> : null}
         </div>
       </div>
 
@@ -198,7 +341,7 @@ export function ChatView() {
               <button
                 key={prompt}
                 type="button"
-                onClick={() => send(prompt)}
+                onClick={() => void send(prompt)}
                 className="rounded-full border border-border bg-surface/95 px-3 py-1.5 text-xs text-text-muted shadow-[0_1px_2px_rgba(16,24,40,0.06)] backdrop-blur transition-colors duration-150 hover:border-border-strong hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {prompt}
@@ -209,7 +352,7 @@ export function ChatView() {
             className="flex items-end gap-2 rounded-2xl border border-border-strong bg-surface p-2 shadow-[0_12px_32px_-12px_rgba(16,24,40,0.18),0_2px_6px_rgba(16,24,40,0.06)] transition-colors focus-within:border-accent/60 focus-within:ring-1 focus-within:ring-accent/30"
             onSubmit={(e) => {
               e.preventDefault();
-              send(draft);
+              void send(draft);
             }}
           >
             <label htmlFor="chat-input" className="sr-only">
@@ -224,7 +367,7 @@ export function ChatView() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  send(draft);
+                  void send(draft);
                 }
               }}
               placeholder="Ask about assets, schedule, exposure..."

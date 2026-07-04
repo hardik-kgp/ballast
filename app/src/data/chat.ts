@@ -30,12 +30,7 @@ const vibNow = vib[vib.length - 1]?.vibMmS ?? 0;
 const vibBase = vib[0]?.vibMmS ?? 0;
 const shortfallMwh = FEED.generation24h.reduce((s, p) => s + p.shortfallMw, 0);
 const peakShortfall = Math.max(...FEED.generation24h.map((p) => p.shortfallMw));
-const rtmPeak = FEED.marketPrices24h.reduce(
-  (best, p) => (p.rtmRs !== null && p.rtmRs > best.price ? { price: p.rtmRs, time: p.time } : best),
-  { price: 0, time: "" }
-);
 const worstUnit = [...FEED.exposureByUnit].sort((a, b) => b.netCr - a.netCr)[0];
-const worstMonth = [...FEED.exposureMonthly].sort((a, b) => b.netCr - a.netCr)[0];
 
 export const SUGGESTED_PROMPTS = [
   "What is my exposure if BFP-2A trips this week?",
@@ -117,41 +112,3 @@ export const SEED_MESSAGES: ChatMessage[] = [
   },
 ];
 
-export const FOLLOW_UP_RESPONSES: ChatMessage[] = [
-  {
-    id: "f1",
-    role: "assistant",
-    content:
-      `Exchange prices over the last 24 hours peaked at \u20B9${rtmPeak.price.toFixed(2)}/kWh on the real-time market around ${rtmPeak.time}, versus roughly \u20B94/kWh off-peak. This spread is the core of the downtime problem: an unplanned trip forces you to buy replacement power in exactly the evening blocks where RTM is most expensive, while a planned outage taken in the early-morning trough costs a fraction.`,
-    highlights: [
-      `RTM peak \u20B9${rtmPeak.price.toFixed(2)}/kWh at ${rtmPeak.time}`,
-      "Evening peak blocks are ~2x the overnight trough",
-      "Unplanned trips buy at the worst hours; planned windows avoid them",
-    ],
-    artifact: {
-      id: "f-art1",
-      title: "IEX day-ahead vs real-time prices, last 24 hours",
-      subtitle: "Replacement power for a trip is bought on these curves",
-      chart: "market_prices",
-      footnote: "Source: market_prices (DAM + RTM), hourly means of 15-min clearing prices",
-    },
-  },
-  {
-    id: "f2",
-    role: "assistant",
-    content:
-      `Month by month, the leak is steady rather than spiky: ${worstMonth?.month ?? ""} was the worst at \u20B9${worstMonth?.netCr ?? 0} Cr, driven by ${worstMonth && worstMonth.ccLostCr > worstMonth.dsmCr ? "capacity-charge under-recovery" : "DSM deviation penalties"}. The pattern suggests two levers: protect availability on the at-risk units (that is the BFP-2A decision), and tighten schedule adherence to cut the recurring DSM bleed.`,
-    highlights: [
-      `Worst month ${worstMonth?.month ?? ""}: \u20B9${worstMonth?.netCr ?? 0} Cr net exposure`,
-      "DSM penalties recur every month; CC losses spike with availability dips",
-      "Both levers are operational, not tariff-driven",
-    ],
-    artifact: {
-      id: "f-art2",
-      title: "Monthly commercial exposure breakdown",
-      subtitle: "Capacity charge lost, DSM penalty and RTM replacement by month",
-      chart: "exposure_monthly",
-      footnote: "Source: commercial_exposure, grouped by settlement month",
-    },
-  },
-];

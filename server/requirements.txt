@@ -1,0 +1,4 @@
+# Ballast intelligence layer (query service)
+fastapi>=0.110
+uvicorn>=0.29
+httpx>=0.27
