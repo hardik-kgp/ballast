@@ -1,0 +1,86 @@
+{
+  "product": "Ballast",
+  "purpose": "Semantic layer / harness for grounding an LLM over the Ballast thermal-power digital-twin database. Describes tables, grains, join graph, source systems, and the ₹ metric formulas so the model can write correct SQL and never hallucinate structure.",
+  "db_path": "data/ballast.db",
+  "engine": "sqlite",
+  "conventions": {
+    "time_high_res": "High-volume time-series columns named `ts` are INTEGER Unix epoch SECONDS (UTC). Convert to IST by adding tz_offset_seconds (19800). In SQL: datetime(ts+19800,'unixepoch').",
+    "time_daily": "Daily/reference tables use TEXT ISO date `date` = 'YYYY-MM-DD' and `month` = 'YYYY-MM'.",
+    "now": "Current sim time = data_meta['clock_now'] (epoch). The DB is anchored to 2026-07-04 08:00 IST; do not use wall-clock now().",
+    "money": "All ₹ amounts are in rupees. Divide by 1e7 for crore (Cr).",
+    "prefer_rollups": "For KPIs/₹, query the daily rollup tables (performance_kpi, commitments, commercial_exposure) and views — NOT raw telemetry. Raw telemetry is only for single-tag time-series charts (filter by tag_id + ts range)."
+  },
+  "source_systems": {
+    "DCS/HIST": "Distributed Control System + Historian (Emerson Ovation, OSIsoft/AVEVA PI). Feeds: telemetry, telemetry_1min, condition_monitoring, unit_operating_state, emissions, ambient_weather.",
+    "CMMS": "Maintenance/EAM (SAP PM, IBM Maximo). Feeds: equipment, work_orders, outage_events, reliability_metrics, spares_inventory, equipment_spares, purchase_orders.",
+    "COMM": "Commercial/Scheduling/Market (RLDC/SLDC, REMC, IEX/PXIL). Feeds: commitments, schedule_blocks, commercial_exposure, tariff_components, market_prices, beneficiaries, fuel_stock.",
+    "BALLAST": "Ballast's own AI/agentic outputs. Feeds: failure_predictions, alerts, data_meta."
+  },
+  "grounding_standards": {
+    "ISO_14224": "equipment taxonomy (system/subsystem/equipment_class) + failure_mode/failure_mechanism vocabulary (equipment, failure_modes tables).",
+    "NERC_GADS_IEEE_762": "availability/reliability metrics EAF/EFOR/EFORd + outage event classes (reliability_metrics, outage_events.gads_event_type).",
+    "CERC_ABT_2024": "availability-based tariff: capacity charge recovery vs NAPAF, DSM (units.napaf_pct, units.afc_cr_per_year, commercial_exposure).",
+    "CEA_PAT": "performance norms: station heat rate, PLF, aux consumption, specific coal (performance_kpi).",
+    "CPCB_CEMS": "emission monitoring SOx/NOx/SPM/CO2 (emissions)."
+  },
+  "metric_formulas": {
+    "capacity_charge_recovery": "Per CERC: Capacity Charge = AFC × 0.5 × (NDM/NDY) × (PAFM/NAPAF). Full recovery requires PAF ≥ NAPAF. If PAF < NAPAF, recovery is pro-rated -> under-recovery = the penalty. Stored daily in commercial_exposure.capacity_charge_lost_inr.",
+    "net_exposure": "commercial_exposure.net_exposure_inr = capacity_charge_lost_inr + dsm_charge_inr + rtm_replacement_cost_inr. The single ₹ number Ballast optimizes down.",
+    "dsm_charge": "Deviation Settlement: penalty for under-injecting vs schedule, priced off grid frequency / exchange (commercial_exposure.dsm_charge_inr).",
+    "rtm_replacement": "When a unit is derated/tripped it buys shortfall energy on IEX Real-Time Market at a premium (commercial_exposure.rtm_replacement_cost_inr, exchange_price_inr_mwh).",
+    "health_index": "condition_monitoring.health_index 0..100 (100 healthy). Derived from vibration (ISO 10816: 4.5 alert, 7.1 danger) and bearing temperature.",
+    "eaf_efor": "reliability_metrics: EAF = equivalent availability factor; EFOR/EFORd = equivalent forced outage rate (demand) per IEEE 762."
+  },
+  "tables": [
+    {"name":"data_meta","source":"BALLAST","grain":"key-value","desc":"Clock/now pointer + generation metadata. Read clock_now for current time.","keys":["key"]},
+    {"name":"plants","source":"CMMS","grain":"one row per plant","desc":"Generating stations.","keys":["plant_id"]},
+    {"name":"units","source":"CMMS","grain":"one row per unit","desc":"Generating units. Holds napaf_pct + afc_cr_per_year that drive all ₹ math.","keys":["unit_id"],"joins":["units.plant_id=plants.plant_id"],"important":["napaf_pct","afc_cr_per_year","capacity_mw","energy_charge_rate_inr_kwh"]},
+    {"name":"equipment","source":"CMMS","grain":"one row per physical asset","desc":"ISO 14224 taxonomy. standby_equip_id encodes redundancy (used to detect 'no healthy standby'). monitored=1 streams condition data.","keys":["equip_id"],"joins":["equipment.unit_id=units.unit_id","equipment.standby_equip_id=equipment.equip_id"],"important":["type","equipment_class","criticality","redundancy","standby_equip_id","monitored"]},
+    {"name":"failure_modes","source":"CMMS","grain":"catalog row per class+mode","desc":"ISO 14224 failure-mode/mechanism reference per equipment_class.","keys":["fm_id"],"joins":["failure_modes.equipment_class=equipment.equipment_class"]},
+    {"name":"process_tags","source":"DCS/HIST","grain":"one row per PI tag","desc":"Tag catalog. tier='both' tags also exist at 1-min. Join to telemetry via tag_id.","keys":["tag_id"],"joins":["process_tags.equip_id=equipment.equip_id","process_tags.unit_id=units.unit_id"],"important":["param_type","uom","hi","hi_hi","tier"]},
+    {"name":"telemetry","source":"DCS/HIST","grain":"hourly, 90d, all tags","desc":"Full-history rollup for trend charts. Filter by tag_id + ts range.","keys":["tag_id","ts"],"joins":["telemetry.tag_id=process_tags.tag_id"]},
+    {"name":"telemetry_1min","source":"DCS/HIST","grain":"1-min, ~14d, monitored tags","desc":"High-res raw for the live twin + vibration zoom. Live ticker appends here.","keys":["tag_id","ts"],"joins":["telemetry_1min.tag_id=process_tags.tag_id"]},
+    {"name":"condition_monitoring","source":"DCS/HIST","grain":"hourly per monitored asset","desc":"Vibration/bearing/health per rotating asset. Use v_equipment_health_now for latest.","keys":["equip_id","ts"],"joins":["condition_monitoring.equip_id=equipment.equip_id"],"important":["vibration_mm_s","bearing_temp_de_c","health_index"]},
+    {"name":"unit_operating_state","source":"DCS/HIST","grain":"15-min per unit","desc":"Load/state/frequency. state in {running,derated,tripped,reserve_shutdown,planned_outage,startup}.","keys":["unit_id","ts"],"joins":["unit_operating_state.unit_id=units.unit_id"]},
+    {"name":"emissions","source":"DCS/HIST","grain":"hourly per unit","desc":"CEMS: SOx/NOx/SPM/CO2/O2/stack temp (mg/Nm3).","keys":["unit_id","ts"],"joins":["emissions.unit_id=units.unit_id"]},
+    {"name":"ambient_weather","source":"DCS/HIST","grain":"hourly per plant","desc":"Ambient temp/humidity/CW inlet (affects condenser vacuum & output).","keys":["plant_id","ts"]},
+    {"name":"performance_kpi","source":"DCS/HIST+calc","grain":"daily per unit","desc":"PLF, PAF, station heat rate, aux %, specific coal, efficiency. Primary source for KPI charts.","keys":["unit_id","date"],"joins":["performance_kpi.unit_id=units.unit_id"]},
+    {"name":"work_orders","source":"CMMS","grain":"one per WO","desc":"Maintenance orders (preventive/breakdown/predictive). status in {open,in_progress,completed,scheduled}. Golden: BFP-2C has an in_progress breakdown WO (standby down).","keys":["wo_id"],"joins":["work_orders.equip_id=equipment.equip_id","work_orders.fm_id=failure_modes.fm_id"]},
+    {"name":"outage_events","source":"CMMS","grain":"one per outage/derating","desc":"GADS-classed events (forced/planned/maintenance/derating) with cause codes + mwh_lost.","keys":["outage_id"],"joins":["outage_events.unit_id=units.unit_id"]},
+    {"name":"reliability_metrics","source":"CMMS","grain":"monthly per unit","desc":"EAF/EFOR/EFORd/MTBF/MTTR/trips per IEEE 762.","keys":["unit_id","month"]},
+    {"name":"failure_predictions","source":"BALLAST","grain":"one per prediction","desc":"Ballast AI output: predicted_failure_date, rul_days, confidence, recommended_action, rupees_at_risk. The golden BFP-2A prediction lives here.","keys":["pred_id"],"joins":["failure_predictions.equip_id=equipment.equip_id"]},
+    {"name":"alerts","source":"BALLAST","grain":"one per alert","desc":"Live alert/notification stream the twin surfaces. Use v_active_alerts. Severity critical/warning/info; rupees_at_risk on commercial alerts.","keys":["alert_id"],"joins":["alerts.unit_id=units.unit_id","alerts.equip_id=equipment.equip_id"]},
+    {"name":"spares_inventory","source":"CMMS/ERP","grain":"one per part","desc":"Critical spares w/ on_hand_qty + lead_time_days. Golden: SP-BRG-BFP-THR on_hand=0, lead_time=14d.","keys":["part_id"]},
+    {"name":"equipment_spares","source":"CMMS","grain":"BOM link","desc":"Which spare each equipment needs (many-to-many).","keys":["equip_id","part_id"],"joins":["equipment_spares.equip_id=equipment.equip_id","equipment_spares.part_id=spares_inventory.part_id"]},
+    {"name":"purchase_orders","source":"ERP","grain":"one per PO","desc":"Incoming spares w/ eta + status. Golden: PO-2026-3391 for the bearing arrives ~12d out (too late).","keys":["po_id"],"joins":["purchase_orders.part_id=spares_inventory.part_id"]},
+    {"name":"fuel_stock","source":"COMM/ERP","grain":"daily per plant","desc":"Coal stock, days_of_coal (<4 critical), GCV, moisture, ash, cost. Secondary scenario: CSTPS ~3.4 days now.","keys":["plant_id","date"]},
+    {"name":"commitments","source":"COMM","grain":"daily per unit","desc":"declared_capacity_mw vs scheduled_mwh vs actual_mwh + PAF. 'Run closer to capacity' moves declared_capacity_mw.","keys":["unit_id","date"],"joins":["commitments.unit_id=units.unit_id"]},
+    {"name":"schedule_blocks","source":"COMM","grain":"15-min per unit, ~14d","desc":"Intraday scheduled vs actual MW (dispatch profile chart).","keys":["unit_id","ts"]},
+    {"name":"commercial_exposure","source":"COMM","grain":"daily per unit","desc":"THE ₹ table. capacity_charge_lost_inr + dsm_charge_inr + rtm_replacement_cost_inr = net_exposure_inr. Use v_exposure_90d for totals.","keys":["unit_id","date"],"joins":["commercial_exposure.unit_id=units.unit_id"]},
+    {"name":"tariff_components","source":"COMM","grain":"per unit x component","desc":"AFC breakdown (RoE/depreciation/interest/O&M/WC) for waterfall.","keys":["unit_id","component"]},
+    {"name":"market_prices","source":"COMM","grain":"15-min, 90d, DAM+RTM","desc":"IEX clearing prices ₹/MWh (price curve chart).","keys":["ts","market"]},
+    {"name":"beneficiaries","source":"COMM","grain":"per unit x discom","desc":"PPA allocations: who buys the unit's power (allocation pie).","keys":["unit_id","beneficiary"]}
+  ],
+  "views": {
+    "v_equipment_health_now":"latest condition + health per monitored asset (with redundancy/standby).",
+    "v_unit_latest_state":"latest operating state per unit.",
+    "v_exposure_90d":"90-day ₹ exposure totals per unit (Cr), split by cause.",
+    "v_active_alerts":"active alerts, severity-ordered, with equipment name."
+  },
+  "golden_scenario": {
+    "equip_id":"VSTPS-U3-BFP-A",
+    "story":"Boiler Feed Pump 2A on VSTPS-U3 has rising vibration (~6.1 mm/s), predicted to fail in ~5 days. Its standby BFP-2C is out on maintenance (in_progress WO). The spare thrust bearing (SP-BRG-BFP-THR) is out of stock with 14-day lead; incoming PO arrives ~12 days out (too late). VSTPS-U3's PAF hovers just above NAPAF (83%), so a derating pushes it below -> capacity-charge under-recovery + DSM + RTM replacement. Projected exposure ≈ ₹4.76 Cr.",
+    "traversal":["condition_monitoring/failure_predictions (health, RUL)","equipment.standby_equip_id + work_orders (standby down)","equipment_spares + spares_inventory + purchase_orders (spare stockout + late PO)","units.napaf_pct + commitments (PAF margin)","commercial_exposure / failure_predictions.rupees_at_risk (₹ impact)"]
+  },
+  "example_questions": [
+    {"q":"What's at risk this week?","sql":"SELECT * FROM v_active_alerts;"},
+    {"q":"Which equipment is closest to failure?","sql":"SELECT e.name,e.unit_id,cm.health_index,cm.vibration_mm_s FROM v_equipment_health_now cm JOIN equipment e USING(equip_id) ORDER BY cm.health_index ASC LIMIT 5;"},
+    {"q":"If BFP-2A trips, what's my rupee exposure?","sql":"SELECT equip_id,predicted_failure_date,rul_days,confidence_pct,rupees_at_risk/10000000.0 AS cr_at_risk,recommended_action FROM failure_predictions WHERE equip_id='VSTPS-U3-BFP-A';"},
+    {"q":"Does BFP-2A have a healthy standby?","sql":"SELECT e.equip_id,e.standby_equip_id,w.status AS standby_wo_status FROM equipment e LEFT JOIN work_orders w ON w.equip_id=e.standby_equip_id AND w.status IN('open','in_progress') WHERE e.equip_id='VSTPS-U3-BFP-A';"},
+    {"q":"Is the spare bearing in stock?","sql":"SELECT s.part_id,s.name,s.on_hand_qty,s.lead_time_days,p.po_id,p.eta FROM spares_inventory s LEFT JOIN purchase_orders p ON p.part_id=s.part_id WHERE s.part_id='SP-BRG-BFP-THR';"},
+    {"q":"How much have we lost to unplanned outages this quarter?","sql":"SELECT * FROM v_exposure_90d ORDER BY net_exposure_cr DESC;"},
+    {"q":"Show PAF vs NAPAF trend for VSTPS-U3","sql":"SELECT date,paf_pct FROM performance_kpi WHERE unit_id='VSTPS-U3' ORDER BY date;"},
+    {"q":"Which units are near an emission limit?","sql":"SELECT unit_id,AVG(nox_mg_nm3) nox FROM emissions WHERE ts>(SELECT CAST(value AS INT)-604800 FROM data_meta WHERE key='clock_now') GROUP BY unit_id ORDER BY nox DESC;"},
+    {"q":"Coal stock status by plant","sql":"SELECT plant_id,days_of_coal,gcv_kcal_kg FROM fuel_stock WHERE date=(SELECT MAX(date) FROM fuel_stock);"}
+  ]
+}

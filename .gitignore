@@ -1,0 +1,18 @@
+# Generated database (regenerate with: python3 data/generate.py)
+data/ballast.db
+data/ballast.db-wal
+data/ballast.db-shm
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
