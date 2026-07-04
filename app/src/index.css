@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 220 25% 97.5%;
+    --surface: 0 0% 100%;
+    --surface-raised: 220 20% 98%;
+    --surface-overlay: 220 16% 94.5%;
+    --border: 220 13% 90%;
+    --border-strong: 220 12% 83%;
+    --text: 222 47% 11%;
+    --text-muted: 220 9% 40%;
+    --text-subtle: 220 9% 55%;
+    --accent: 224 72% 45%;
+    --accent-soft: 224 72% 45%;
+    --accent-foreground: 0 0% 100%;
+    --success: 152 60% 34%;
+    --warning: 32 90% 42%;
+    --danger: 347 77% 45%;
+    --info: 210 90% 42%;
+    --ring: 224 72% 50%;
+    --chart-1: 224 72% 50%;
+    --chart-2: 160 84% 30%;
+    --chart-3: 32 90% 46%;
+    --chart-4: 262 60% 52%;
+    --chart-5: 347 77% 50%;
+    --chart-grid: 220 13% 91%;
+    --radius: 0.625rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    @apply bg-bg font-sans text-[14.5px] leading-[1.5] tracking-[-0.006em] text-text;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.15);
+  }
+
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border-strong));
+    border-radius: 999px;
+    border: 2px solid hsl(var(--bg));
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer utilities {
+  .heading-tight {
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .animate-tick {
+    animation: tick-refresh 0.5s ease-out;
+  }
+}
+
+@keyframes tick-refresh {
+  0% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 1;
+  }
+}

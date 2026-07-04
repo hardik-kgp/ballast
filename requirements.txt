@@ -1,4 +1,4 @@
 # Ballast data layer
 numpy>=1.24
-pandas>=2.0
+pandas>=2.0,<3    # generate.py relies on pandas 2.x nanosecond epoch semantics
 fpdf2>=2.7      # synthetic manual PDF generation (build_manuals.py)

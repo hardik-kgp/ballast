@@ -1,0 +1,695 @@
+{
+  "meta": {
+    "operator": "NTPC",
+    "clockNowEpoch": 1783132200,
+    "plantCount": 2,
+    "unitCount": 5,
+    "installedMw": 2820.0,
+    "goldenEquip": "VSTPS-U3-BFP-A",
+    "goldenUnit": "VSTPS-U3",
+    "vibAlert": 4.5,
+    "vibDanger": 7.1
+  },
+  "kpis": {
+    "fleetLoadMw": 2197,
+    "declaredMw": 2495,
+    "availabilityPct": 87.1,
+    "netExposure90dCr": 16.8,
+    "minCoalDays": 3.4
+  },
+  "units": [
+    {
+      "unitId": "CSTPS-U1",
+      "plantId": "CSTPS",
+      "plantName": "Coastal Super Thermal Power Station",
+      "name": "CSTPS Unit 1",
+      "capacityMw": 660.0,
+      "loadMw": 538,
+      "state": "running",
+      "status": "nominal",
+      "healthIndex": 89,
+      "worstEquip": "Coal Mill E",
+      "vibrationMmS": 2.9,
+      "bearingTempC": 67.2,
+      "riskPct": 9,
+      "loadTrend": [
+        499,
+        513,
+        513,
+        502,
+        510,
+        511,
+        505,
+        508
+      ]
+    },
+    {
+      "unitId": "CSTPS-U2",
+      "plantId": "CSTPS",
+      "plantName": "Coastal Super Thermal Power Station",
+      "name": "CSTPS Unit 2",
+      "capacityMw": 660.0,
+      "loadMw": 536,
+      "state": "running",
+      "status": "nominal",
+      "healthIndex": 89,
+      "worstEquip": "Cw Pump B",
+      "vibrationMmS": 2.9,
+      "bearingTempC": 66.4,
+      "riskPct": 9,
+      "loadTrend": [
+        512,
+        522,
+        498,
+        478,
+        529,
+        510,
+        519,
+        530
+      ]
+    },
+    {
+      "unitId": "VSTPS-U1",
+      "plantId": "VSTPS",
+      "plantName": "Vindhya Super Thermal Power Station",
+      "name": "VSTPS Unit 1",
+      "capacityMw": 500.0,
+      "loadMw": 368,
+      "state": "running",
+      "status": "watch",
+      "healthIndex": 57,
+      "worstEquip": "Coal Mill C",
+      "vibrationMmS": 4.8,
+      "bearingTempC": 81.2,
+      "riskPct": 34,
+      "loadTrend": [
+        351,
+        352,
+        345,
+        340,
+        349,
+        359,
+        364,
+        365
+      ]
+    },
+    {
+      "unitId": "VSTPS-U2",
+      "plantId": "VSTPS",
+      "plantName": "Vindhya Super Thermal Power Station",
+      "name": "VSTPS Unit 2",
+      "capacityMw": 500.0,
+      "loadMw": 377,
+      "state": "running",
+      "status": "nominal",
+      "healthIndex": 90,
+      "worstEquip": "Coal Mill D",
+      "vibrationMmS": 2.9,
+      "bearingTempC": 64.2,
+      "riskPct": 8,
+      "loadTrend": [
+        359,
+        351,
+        360,
+        358,
+        349,
+        358,
+        372,
+        380
+      ]
+    },
+    {
+      "unitId": "VSTPS-U3",
+      "plantId": "VSTPS",
+      "plantName": "Vindhya Super Thermal Power Station",
+      "name": "VSTPS Unit 3",
+      "capacityMw": 500.0,
+      "loadMw": 378,
+      "state": "running",
+      "status": "at_risk",
+      "healthIndex": 34,
+      "worstEquip": "Boiler Feed Pump A",
+      "vibrationMmS": 6.2,
+      "bearingTempC": 87.6,
+      "riskPct": 78,
+      "loadTrend": [
+        351,
+        355,
+        350,
+        352,
+        350,
+        350,
+        376,
+        375
+      ]
+    }
+  ],
+  "generation24h": [
+    {
+      "time": "08:30",
+      "scheduledMw": 2328,
+      "actualMw": 2316,
+      "shortfallMw": 12
+    },
+    {
+      "time": "09:30",
+      "scheduledMw": 2344,
+      "actualMw": 2325,
+      "shortfallMw": 19
+    },
+    {
+      "time": "10:30",
+      "scheduledMw": 2360,
+      "actualMw": 2338,
+      "shortfallMw": 22
+    },
+    {
+      "time": "11:30",
+      "scheduledMw": 2393,
+      "actualMw": 2394,
+      "shortfallMw": 0
+    },
+    {
+      "time": "12:30",
+      "scheduledMw": 2434,
+      "actualMw": 2435,
+      "shortfallMw": 0
+    },
+    {
+      "time": "13:30",
+      "scheduledMw": 2479,
+      "actualMw": 2472,
+      "shortfallMw": 7
+    },
+    {
+      "time": "14:30",
+      "scheduledMw": 2506,
+      "actualMw": 2483,
+      "shortfallMw": 23
+    },
+    {
+      "time": "15:30",
+      "scheduledMw": 2498,
+      "actualMw": 2496,
+      "shortfallMw": 2
+    },
+    {
+      "time": "16:30",
+      "scheduledMw": 2485,
+      "actualMw": 2462,
+      "shortfallMw": 23
+    },
+    {
+      "time": "17:30",
+      "scheduledMw": 2545,
+      "actualMw": 2558,
+      "shortfallMw": 0
+    },
+    {
+      "time": "18:30",
+      "scheduledMw": 2564,
+      "actualMw": 2534,
+      "shortfallMw": 30
+    },
+    {
+      "time": "19:30",
+      "scheduledMw": 2520,
+      "actualMw": 2510,
+      "shortfallMw": 10
+    },
+    {
+      "time": "20:30",
+      "scheduledMw": 2496,
+      "actualMw": 2498,
+      "shortfallMw": 0
+    },
+    {
+      "time": "21:30",
+      "scheduledMw": 2465,
+      "actualMw": 2451,
+      "shortfallMw": 14
+    },
+    {
+      "time": "22:30",
+      "scheduledMw": 2359,
+      "actualMw": 2327,
+      "shortfallMw": 32
+    },
+    {
+      "time": "23:30",
+      "scheduledMw": 2160,
+      "actualMw": 2157,
+      "shortfallMw": 4
+    },
+    {
+      "time": "00:30",
+      "scheduledMw": 2081,
+      "actualMw": 2062,
+      "shortfallMw": 18
+    },
+    {
+      "time": "01:30",
+      "scheduledMw": 2092,
+      "actualMw": 2063,
+      "shortfallMw": 29
+    },
+    {
+      "time": "02:30",
+      "scheduledMw": 2048,
+      "actualMw": 2005,
+      "shortfallMw": 42
+    },
+    {
+      "time": "03:30",
+      "scheduledMw": 2047,
+      "actualMw": 2020,
+      "shortfallMw": 27
+    },
+    {
+      "time": "04:30",
+      "scheduledMw": 2078,
+      "actualMw": 2059,
+      "shortfallMw": 19
+    },
+    {
+      "time": "05:30",
+      "scheduledMw": 2106,
+      "actualMw": 2060,
+      "shortfallMw": 46
+    },
+    {
+      "time": "06:30",
+      "scheduledMw": 2146,
+      "actualMw": 2129,
+      "shortfallMw": 17
+    },
+    {
+      "time": "07:30",
+      "scheduledMw": 2172,
+      "actualMw": 2149,
+      "shortfallMw": 23
+    }
+  ],
+  "vibrationTrend": [
+    {
+      "date": "May 30",
+      "vibMmS": 2.41
+    },
+    {
+      "date": "May 31",
+      "vibMmS": 2.4
+    },
+    {
+      "date": "Jun 01",
+      "vibMmS": 2.41
+    },
+    {
+      "date": "Jun 02",
+      "vibMmS": 2.4
+    },
+    {
+      "date": "Jun 03",
+      "vibMmS": 2.42
+    },
+    {
+      "date": "Jun 04",
+      "vibMmS": 2.4
+    },
+    {
+      "date": "Jun 05",
+      "vibMmS": 2.42
+    },
+    {
+      "date": "Jun 06",
+      "vibMmS": 2.43
+    },
+    {
+      "date": "Jun 07",
+      "vibMmS": 2.5
+    },
+    {
+      "date": "Jun 08",
+      "vibMmS": 2.46
+    },
+    {
+      "date": "Jun 09",
+      "vibMmS": 2.54
+    },
+    {
+      "date": "Jun 10",
+      "vibMmS": 2.61
+    },
+    {
+      "date": "Jun 11",
+      "vibMmS": 2.65
+    },
+    {
+      "date": "Jun 12",
+      "vibMmS": 2.7
+    },
+    {
+      "date": "Jun 13",
+      "vibMmS": 2.8
+    },
+    {
+      "date": "Jun 14",
+      "vibMmS": 2.9
+    },
+    {
+      "date": "Jun 15",
+      "vibMmS": 2.93
+    },
+    {
+      "date": "Jun 16",
+      "vibMmS": 2.99
+    },
+    {
+      "date": "Jun 17",
+      "vibMmS": 3.05
+    },
+    {
+      "date": "Jun 18",
+      "vibMmS": 3.22
+    },
+    {
+      "date": "Jun 19",
+      "vibMmS": 3.36
+    },
+    {
+      "date": "Jun 20",
+      "vibMmS": 3.47
+    },
+    {
+      "date": "Jun 21",
+      "vibMmS": 3.59
+    },
+    {
+      "date": "Jun 22",
+      "vibMmS": 3.74
+    },
+    {
+      "date": "Jun 23",
+      "vibMmS": 3.89
+    },
+    {
+      "date": "Jun 24",
+      "vibMmS": 4.02
+    },
+    {
+      "date": "Jun 25",
+      "vibMmS": 4.22
+    },
+    {
+      "date": "Jun 26",
+      "vibMmS": 4.38
+    },
+    {
+      "date": "Jun 27",
+      "vibMmS": 4.58
+    },
+    {
+      "date": "Jun 28",
+      "vibMmS": 4.74
+    },
+    {
+      "date": "Jun 29",
+      "vibMmS": 4.98
+    },
+    {
+      "date": "Jun 30",
+      "vibMmS": 5.24
+    },
+    {
+      "date": "Jul 01",
+      "vibMmS": 5.44
+    },
+    {
+      "date": "Jul 02",
+      "vibMmS": 5.64
+    },
+    {
+      "date": "Jul 03",
+      "vibMmS": 5.89
+    },
+    {
+      "date": "Jul 04",
+      "vibMmS": 6.1
+    }
+  ],
+  "marketPrices24h": [
+    {
+      "time": "00:30",
+      "damRs": 4.29,
+      "rtmRs": 4.53
+    },
+    {
+      "time": "01:30",
+      "damRs": 4.3,
+      "rtmRs": 4.72
+    },
+    {
+      "time": "02:30",
+      "damRs": 4.35,
+      "rtmRs": 4.4
+    },
+    {
+      "time": "03:30",
+      "damRs": 4.3,
+      "rtmRs": 4.45
+    },
+    {
+      "time": "04:30",
+      "damRs": 4.16,
+      "rtmRs": 4.45
+    },
+    {
+      "time": "05:30",
+      "damRs": 5.37,
+      "rtmRs": 5.32
+    },
+    {
+      "time": "06:30",
+      "damRs": 6.02,
+      "rtmRs": 6.55
+    },
+    {
+      "time": "07:30",
+      "damRs": 5.89,
+      "rtmRs": 6.5
+    },
+    {
+      "time": "08:30",
+      "damRs": 5.91,
+      "rtmRs": 6.45
+    },
+    {
+      "time": "09:30",
+      "damRs": 5.06,
+      "rtmRs": 5.65
+    },
+    {
+      "time": "10:30",
+      "damRs": 4.15,
+      "rtmRs": 4.54
+    },
+    {
+      "time": "11:30",
+      "damRs": 3.93,
+      "rtmRs": 4.72
+    },
+    {
+      "time": "12:30",
+      "damRs": 4.32,
+      "rtmRs": 4.37
+    },
+    {
+      "time": "13:30",
+      "damRs": 4.05,
+      "rtmRs": 4.68
+    },
+    {
+      "time": "14:30",
+      "damRs": 4.27,
+      "rtmRs": 4.41
+    },
+    {
+      "time": "15:30",
+      "damRs": 4.28,
+      "rtmRs": 4.69
+    },
+    {
+      "time": "16:30",
+      "damRs": 4.46,
+      "rtmRs": 4.39
+    },
+    {
+      "time": "17:30",
+      "damRs": 6.09,
+      "rtmRs": 6.43
+    },
+    {
+      "time": "18:30",
+      "damRs": 7.61,
+      "rtmRs": 8.16
+    },
+    {
+      "time": "19:30",
+      "damRs": 7.95,
+      "rtmRs": 8.11
+    },
+    {
+      "time": "20:30",
+      "damRs": 8.0,
+      "rtmRs": 8.34
+    },
+    {
+      "time": "21:30",
+      "damRs": 7.95,
+      "rtmRs": 8.21
+    },
+    {
+      "time": "22:30",
+      "damRs": 7.73,
+      "rtmRs": 8.16
+    },
+    {
+      "time": "23:30",
+      "damRs": 6.08,
+      "rtmRs": 6.1
+    }
+  ],
+  "exposureMonthly": [
+    {
+      "month": "Apr",
+      "ccLostCr": 0.03,
+      "dsmCr": 4.38,
+      "rtmCr": 0.0,
+      "netCr": 4.41
+    },
+    {
+      "month": "May",
+      "ccLostCr": 3.45,
+      "dsmCr": 3.44,
+      "rtmCr": 0.01,
+      "netCr": 6.91
+    },
+    {
+      "month": "Jun",
+      "ccLostCr": 0.0,
+      "dsmCr": 4.67,
+      "rtmCr": 0.0,
+      "netCr": 4.67
+    },
+    {
+      "month": "Jul",
+      "ccLostCr": 0.0,
+      "dsmCr": 0.75,
+      "rtmCr": 0.0,
+      "netCr": 0.75
+    }
+  ],
+  "exposureByUnit": [
+    {
+      "unitId": "CSTPS-U1",
+      "ccLostCr": 0.0,
+      "dsmCr": 2.91,
+      "rtmCr": 0.0,
+      "netCr": 2.91
+    },
+    {
+      "unitId": "CSTPS-U2",
+      "ccLostCr": 0.0,
+      "dsmCr": 2.86,
+      "rtmCr": 0.0,
+      "netCr": 2.86
+    },
+    {
+      "unitId": "VSTPS-U1",
+      "ccLostCr": 0.0,
+      "dsmCr": 3.01,
+      "rtmCr": 0.0,
+      "netCr": 3.01
+    },
+    {
+      "unitId": "VSTPS-U2",
+      "ccLostCr": 3.38,
+      "dsmCr": 2.43,
+      "rtmCr": 0.01,
+      "netCr": 5.82
+    },
+    {
+      "unitId": "VSTPS-U3",
+      "ccLostCr": 0.11,
+      "dsmCr": 2.05,
+      "rtmCr": 0.0,
+      "netCr": 2.16
+    }
+  ],
+  "prediction": {
+    "equipId": "VSTPS-U3-BFP-A",
+    "equipName": "Boiler Feed Pump A",
+    "tagNo": "3-BFP-A",
+    "unitId": "VSTPS-U3",
+    "failureMode": "vibration_high",
+    "rulDays": 5.0,
+    "confidencePct": 87.0,
+    "rupeesAtRiskCr": 4.76,
+    "recommendedAction": "Expedite thrust bearing SP-BRG-BFP-THR (14d lead — air-freight); return BFP-2C to service by closing WO; if unavailable, pre-emptively derate U3 to protect grid commitment.",
+    "predictedFailureDate": "2026-07-09"
+  },
+  "spare": {
+    "partId": "SP-BRG-BFP-THR",
+    "name": "Thrust bearing assembly, BFP",
+    "onHandQty": 0,
+    "leadTimeDays": 14,
+    "poId": "PO-2026-3391",
+    "poEta": "2026-07-16",
+    "poStatus": "in_transit"
+  },
+  "alerts": [
+    {
+      "alertId": 1,
+      "unitId": "VSTPS-U3",
+      "equipName": "Boiler Feed Pump A",
+      "severity": "critical",
+      "category": "condition",
+      "title": "BFP-2A failure predicted in ~5 days",
+      "message": "Vibration 6.2 mm/s and rising (ISO 10816 danger 7.1). Standby BFP-2C is out on maintenance (WO in progress). Spare thrust bearing out of stock (14-day lead). Projected exposure if it trips: ₹4.76 Cr.",
+      "rupeesAtRiskCr": 4.76,
+      "minutesAgo": 60
+    },
+    {
+      "alertId": 2,
+      "unitId": "CSTPS",
+      "equipName": null,
+      "severity": "warning",
+      "category": "fuel",
+      "title": "Coal stock at 3.4 days (below 4-day critical)",
+      "message": "Imported-coal receipts lagging burn at CSTPS. Risk of derating both units if not replenished.",
+      "rupeesAtRiskCr": null,
+      "minutesAgo": 120
+    },
+    {
+      "alertId": 3,
+      "unitId": "VSTPS-U2",
+      "equipName": null,
+      "severity": "warning",
+      "category": "emission",
+      "title": "NOx trending toward CPCB limit",
+      "message": "NOx creeping up over the last 3 weeks; approaching the stack limit. Check combustion tuning / SCR.",
+      "rupeesAtRiskCr": null,
+      "minutesAgo": 180
+    },
+    {
+      "alertId": 4,
+      "unitId": "VSTPS-U1",
+      "equipName": "Coal Mill C",
+      "severity": "info",
+      "category": "condition",
+      "title": "Mill-C mild vibration elevation",
+      "message": "Mill-C vibration 4.9 mm/s (alert 4.5). Low anomaly score; monitor.",
+      "rupeesAtRiskCr": null,
+      "minutesAgo": 240
+    }
+  ]
+}
