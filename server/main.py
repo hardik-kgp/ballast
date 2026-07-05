@@ -17,6 +17,7 @@ import time
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -87,6 +88,19 @@ Output STRICT JSON only: {"answer": "...", "highlights": ["...", "..."]}
 - "answer": 2-4 complete sentences, plain prose, grounded ONLY in the rows. Use concrete numbers with units (MW, mm/s, %, days) and rupees in crore (Cr). No markdown, no em dashes.
 - "highlights": 2-4 short bullet strings with the key numbers.
 - If the rows are empty, say plainly that nothing matched and suggest what to check instead. Never invent values.
+"""
+
+HIGHLIGHTS_SENTINEL = "===HIGHLIGHTS==="
+
+ANSWER_STREAM_SYSTEM_PROMPT = f"""You are Ballast, a plant intelligence assistant for thermal power operators.
+Given the operator's question, the SQL that was executed, and the resulting rows, write the answer.
+
+First write the answer: 2-4 complete sentences of plain prose, grounded ONLY in the rows. Use concrete
+numbers with units (MW, mm/s, %, days) and rupees in crore (Cr). No markdown, no em dashes. If the rows
+are empty, say plainly that nothing matched and suggest what to check instead. Never invent values.
+
+Then, on a new line, output exactly {HIGHLIGHTS_SENTINEL} followed by a JSON array of 2-4 short bullet
+strings with the key numbers, e.g. {HIGHLIGHTS_SENTINEL}["Fleet load 4,712 MW", "Exposure 11.2 Cr"]
 """
 
 
@@ -179,13 +193,8 @@ def healthz():
     return {"status": "ok" if ok else "no-db", "db": DB_PATH, "model": MODEL}
 
 
-@app.post("/api/ask")
-def ask(req: AskRequest):
-    question = req.question.strip()
-    if not question:
-        raise HTTPException(400, "question is required")
-    started = time.monotonic()
-
+def build_plan(question: str) -> tuple[str, dict, list[str], list[list]]:
+    """Generate, validate and execute the SQL plan, with one self-repair retry."""
     messages = [
         {"role": "system", "content": SQL_SYSTEM_PROMPT},
         {"role": "user", "content": question},
@@ -214,6 +223,17 @@ def ask(req: AskRequest):
             )
     if last_error is not None:
         raise HTTPException(422, f"Could not produce a valid query: {last_error}")
+    return sql, plan, columns, rows
+
+
+@app.post("/api/ask")
+def ask(req: AskRequest):
+    question = req.question.strip()
+    if not question:
+        raise HTTPException(400, "question is required")
+    started = time.monotonic()
+
+    sql, plan, columns, rows = build_plan(question)
 
     preview = {"columns": columns, "rows": rows[:60], "total_rows": len(rows)}
     answer_raw = call_llm(
@@ -244,3 +264,124 @@ def ask(req: AskRequest):
         "chart": validate_chart(plan.get("chart"), columns),
         "elapsedMs": int((time.monotonic() - started) * 1000),
     }
+
+
+def sse(event: str, data: dict) -> str:
+    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+def stream_answer(question: str, sql: str, preview: dict):
+    """Yield ("token", text) deltas for the prose, then one ("highlights", list).
+
+    The model writes the prose first and appends highlights after a sentinel,
+    so we can stream tokens without having to parse partial JSON.
+    """
+    payload = {
+        "model": MODEL,
+        "messages": [
+            {"role": "system", "content": ANSWER_STREAM_SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {"question": question, "sql": sql, "result": preview},
+                    ensure_ascii=False,
+                ),
+            },
+        ],
+        "max_tokens": 700,
+        "temperature": 0.1,
+        "stream": True,
+    }
+    acc = ""
+    emitted = 0
+    found = False
+    with httpx.Client(timeout=90.0) as client:
+        with client.stream(
+            "POST", OPENROUTER_URL, headers={"Authorization": f"Bearer {api_key()}"}, json=payload
+        ) as resp:
+            if resp.status_code != 200:
+                body = resp.read().decode("utf-8", "ignore")[:300]
+                raise HTTPException(502, f"LLM stream failed ({resp.status_code}): {body}")
+            for line in resp.iter_lines():
+                if not line.startswith("data:"):
+                    continue
+                data = line[5:].strip()
+                if data == "[DONE]":
+                    break
+                try:
+                    delta = json.loads(data)["choices"][0].get("delta", {}).get("content") or ""
+                except (json.JSONDecodeError, KeyError, IndexError):
+                    continue
+                if not delta:
+                    continue
+                acc += delta
+                if found:
+                    continue
+                idx = acc.find(HIGHLIGHTS_SENTINEL)
+                if idx != -1:
+                    if idx > emitted:
+                        yield "token", acc[emitted:idx]
+                    emitted = idx
+                    found = True
+                else:
+                    # Hold back a sentinel-sized tail so a split sentinel never leaks.
+                    safe = max(emitted, len(acc) - len(HIGHLIGHTS_SENTINEL))
+                    if safe > emitted:
+                        yield "token", acc[emitted:safe]
+                        emitted = safe
+    if not found and len(acc) > emitted:
+        yield "token", acc[emitted:]
+    highlights: list[str] = []
+    if found:
+        tail = acc[emitted + len(HIGHLIGHTS_SENTINEL):]
+        match = re.search(r"\[.*\]", tail, re.DOTALL)
+        if match:
+            try:
+                highlights = [str(h) for h in json.loads(match.group(0))][:4]
+            except json.JSONDecodeError:
+                pass
+    yield "highlights", highlights
+
+
+@app.post("/api/ask/stream")
+def ask_stream(req: AskRequest):
+    question = req.question.strip()
+    if not question:
+        raise HTTPException(400, "question is required")
+
+    def generate():
+        started = time.monotonic()
+        try:
+            yield sse("stage", {"stage": "writing_sql"})
+            sql, plan, columns, rows = build_plan(question)
+            yield sse("sql", {"sql": sql, "intent": str(plan.get("intent", ""))})
+            yield sse(
+                "rows",
+                {
+                    "columns": columns,
+                    "rows": rows,
+                    "chart": validate_chart(plan.get("chart"), columns),
+                    "elapsedMs": int((time.monotonic() - started) * 1000),
+                },
+            )
+            preview = {"columns": columns, "rows": rows[:60], "total_rows": len(rows)}
+            highlights: list[str] = []
+            for kind, value in stream_answer(question, sql, preview):
+                if kind == "token":
+                    yield sse("token", {"t": value})
+                else:
+                    highlights = value
+            yield sse(
+                "done",
+                {"highlights": highlights, "elapsedMs": int((time.monotonic() - started) * 1000)},
+            )
+        except HTTPException as exc:
+            yield sse("error", {"detail": str(exc.detail)})
+        except Exception as exc:  # surface anything else as an SSE error frame
+            yield sse("error", {"detail": str(exc)})
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )

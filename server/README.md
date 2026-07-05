@@ -29,4 +29,17 @@ The app's Vite dev server proxies `/api` to `localhost:8077`, so the chat view q
 }
 ```
 
+`POST /api/ask/stream` takes the same body and returns `text/event-stream` for progressive rendering. Events, in order:
+
+```
+event: stage   data: {"stage": "writing_sql"}
+event: sql     data: {"sql": "SELECT ...", "intent": "..."}
+event: rows    data: {"columns": [...], "rows": [[...]], "chart": {...}|null, "elapsedMs": ...}
+event: token   data: {"t": "answer text delta"}      // repeated
+event: done    data: {"highlights": ["..."], "elapsedMs": ...}
+event: error   data: {"detail": "..."}               // terminal, replaces done
+```
+
+The SQL-generation call stays non-streaming (a partial JSON plan cannot be validated); only the answer-composition call streams, with highlights parsed from a sentinel suffix. The app uses this endpoint and falls back to `POST /api/ask` if it is missing.
+
 `GET /healthz` reports DB presence and the configured model (`BALLAST_LLM_MODEL`, default `openai/gpt-5.4` via OpenRouter).

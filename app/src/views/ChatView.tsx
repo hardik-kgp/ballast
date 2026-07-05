@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowUp, BarChart3, Download, FileText, PanelRightOpen, Sparkles, Table2 } from "lucide-react";
+import {
+  ArrowUp,
+  BarChart3,
+  Download,
+  FileText,
+  MessageSquarePlus,
+  PanelRightOpen,
+  Sparkles,
+  Table2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChartById } from "@/components/charts";
 import { DynamicChart } from "@/components/charts/DynamicChart";
@@ -8,7 +17,7 @@ import { ResultTable } from "@/components/ResultTable";
 import { Card } from "@/components/ui/Card";
 import { downloadChartPng, slugify } from "@/lib/downloadChart";
 import { feedSliceFor, type ArtifactData } from "@/lib/artifact";
-import { askBallast, type AskResponse } from "@/lib/askApi";
+import { askBallastStream, type AskResponse } from "@/lib/askApi";
 import {
   SEED_MESSAGES,
   SUGGESTED_PROMPTS,
@@ -20,6 +29,12 @@ interface Message extends ChatMessage {
   query?: AskResponse;
   error?: boolean;
 }
+
+const STAGE_LABELS: Record<string, string> = {
+  writing_sql: "Writing SQL",
+  running_sql: "Running SQL over ballast.db",
+  composing: "Composing the answer",
+};
 
 type OpenPanel = (data: ArtifactData) => void;
 
@@ -176,10 +191,12 @@ function MessageBubble({
   message,
   question,
   onOpenPanel,
+  streaming = false,
 }: {
   message: Message;
   question: string;
   onOpenPanel: OpenPanel;
+  streaming?: boolean;
 }) {
   if (message.role === "user") {
     return (
@@ -203,6 +220,12 @@ function MessageBubble({
           )}
         >
           {message.content}
+          {streaming ? (
+            <span
+              aria-hidden="true"
+              className="ml-1 inline-block h-[14px] w-[2px] translate-y-[2px] animate-pulse-dot rounded-full bg-accent"
+            />
+          ) : null}
         </p>
         {message.highlights ? (
           <ul className="mt-3 space-y-1.5">
@@ -272,6 +295,8 @@ export function ChatView() {
   const [messages, setMessages] = useState<Message[]>(SEED_MESSAGES);
   const [draft, setDraft] = useState("");
   const [isThinking, setIsThinking] = useState(false);
+  const [stage, setStage] = useState<string | null>(null);
+  const [streamingId, setStreamingId] = useState<string | null>(null);
   const [panel, setPanel] = useState<ArtifactData | null>(null);
   const lastQuestion = useRef("query");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -295,72 +320,157 @@ export function ChatView() {
     el.style.height = `${Math.min(el.scrollHeight, 144)}px`;
   }, [draft]);
 
+  const newChat = () => {
+    if (isThinking) return;
+    setMessages([]);
+    setPanel(null);
+    setDraft("");
+    setHasInteracted(false);
+    textareaRef.current?.focus();
+  };
+
   const send = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isThinking) return;
     setDraft("");
     setHasInteracted(true);
     lastQuestion.current = trimmed;
+    const assistantId = `a-${Date.now()}`;
     setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: "user", content: trimmed }]);
     setIsThinking(true);
+    setStage(STAGE_LABELS.writing_sql);
+
+    // The assistant message is appended lazily on the first event that has
+    // something to show, then mutated in place as the stream progresses.
+    let appended = false;
+    const ensureMessage = () => {
+      if (appended) return;
+      appended = true;
+      setStreamingId(assistantId);
+      setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: "" }]);
+    };
+    const patch = (fn: (m: Message) => Message) =>
+      setMessages((prev) => prev.map((m) => (m.id === assistantId ? fn(m) : m)));
+
+    const partial: AskResponse = {
+      answer: "",
+      highlights: [],
+      sql: "",
+      intent: "",
+      columns: [],
+      rows: [],
+      chart: null,
+      elapsedMs: 0,
+    };
+
     try {
-      const result = await askBallast(trimmed);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `a-${Date.now()}`,
-          role: "assistant",
-          content: result.answer,
-          highlights: result.highlights.length ? result.highlights : undefined,
-          query: result,
+      const result = await askBallastStream(trimmed, {
+        onStage: (s) => setStage(STAGE_LABELS[s] ?? STAGE_LABELS.writing_sql),
+        onSql: (sql, intent) => {
+          partial.sql = sql;
+          partial.intent = intent;
         },
-      ]);
+        onRows: ({ columns, rows, chart }) => {
+          partial.columns = columns;
+          partial.rows = rows;
+          partial.chart = chart;
+          ensureMessage();
+          patch((m) => ({ ...m, query: { ...partial } }));
+          setStage(STAGE_LABELS.composing);
+        },
+        onToken: (t) => {
+          partial.answer += t;
+          ensureMessage();
+          setStage(null);
+          patch((m) => ({ ...m, content: partial.answer }));
+        },
+      });
+      ensureMessage();
+      patch((m) => ({
+        ...m,
+        content: result.answer,
+        highlights: result.highlights.length ? result.highlights : undefined,
+        query: result,
+      }));
     } catch (err) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `e-${Date.now()}`,
-          role: "assistant",
-          content: `The query service did not answer: ${err instanceof Error ? err.message : String(err)}. Start it with "python server/run_local.py" and try again.`,
-          error: true,
-        },
-      ]);
+      const detail = `The query service did not answer: ${err instanceof Error ? err.message : String(err)}. Start it with "python server/run_local.py" and try again.`;
+      if (appended) {
+        patch((m) => ({ ...m, content: m.content || detail, error: !m.content }));
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { id: `e-${Date.now()}`, role: "assistant", content: detail, error: true },
+        ]);
+      }
     } finally {
       setIsThinking(false);
+      setStage(null);
+      setStreamingId(null);
     }
   };
 
   return (
     <div className="flex h-full min-w-0">
       <div className="relative flex h-full min-w-0 flex-1 flex-col">
-      <header className="flex h-[60px] shrink-0 items-center justify-between border-b border-border bg-surface px-5">
-        <div>
+      <header className="flex h-[60px] shrink-0 items-center justify-between gap-3 border-b border-border bg-surface px-5">
+        <div className="min-w-0">
           <h1 className="heading-tight text-[14.5px] font-semibold text-text">
             Operations Assistant
           </h1>
-          <p className="mt-0.5 text-[11.5px] text-text-subtle">
+          <p className="mt-0.5 truncate text-[11.5px] text-text-subtle">
             Live SQL over the plant data layer: telemetry, maintenance, commercial
           </p>
         </div>
+        <button
+          type="button"
+          onClick={newChat}
+          disabled={isThinking}
+          className={cn(
+            "inline-flex shrink-0 items-center gap-1.5 rounded-md border border-border bg-surface px-2.5 py-1.5 text-[11.5px] font-medium transition-colors duration-150",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            isThinking
+              ? "cursor-not-allowed text-text-subtle"
+              : "text-text-muted hover:border-border-strong hover:text-text"
+          )}
+        >
+          <MessageSquarePlus className="h-3.5 w-3.5" aria-hidden="true" />
+          New chat
+        </button>
       </header>
 
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-[760px] space-y-7 px-4 pb-48 pt-8 sm:px-6">
-          {messages.map((message, index) => (
-            <div
-              key={message.id}
-              className="animate-fade-up"
-              style={{ animationDelay: `${Math.min(index * 40, 240)}ms` }}
-            >
-              <MessageBubble
-                message={message}
-                question={lastQuestion.current}
-                onOpenPanel={setPanel}
-              />
-            </div>
-          ))}
-          {isThinking ? <TypingIndicator label="Writing SQL and querying the twin" /> : null}
-        </div>
+        {messages.length === 0 && !isThinking ? (
+          <div className="flex h-full flex-col items-center justify-center px-6 pb-36 text-center">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent">
+              <Sparkles className="h-5 w-5" aria-hidden="true" />
+            </span>
+            <h2 className="heading-tight mt-4 text-[17px] font-semibold text-text">
+              Ask your plant anything
+            </h2>
+            <p className="mt-1.5 max-w-[420px] text-[13px] leading-relaxed text-text-muted">
+              Assets, schedule, exposure, spares, availability. Every answer is a live SQL
+              query over the plant data layer, returned with a chart artifact.
+            </p>
+          </div>
+        ) : (
+          <div className="mx-auto w-full max-w-[760px] space-y-7 px-4 pb-48 pt-8 sm:px-6">
+            {messages.map((message, index) => (
+              <div
+                key={message.id}
+                className="animate-fade-up"
+                style={{ animationDelay: `${Math.min(index * 40, 240)}ms` }}
+              >
+                <MessageBubble
+                  message={message}
+                  question={lastQuestion.current}
+                  onOpenPanel={setPanel}
+                  streaming={isThinking && message.id === streamingId}
+                />
+              </div>
+            ))}
+            {isThinking && stage ? <TypingIndicator label={stage} /> : null}
+          </div>
+        )}
       </div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 pb-5">
