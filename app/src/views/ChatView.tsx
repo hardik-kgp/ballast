@@ -363,33 +363,6 @@ export function ChatView() {
       elapsedMs: 0,
     };
 
-    // Pacing layer between the SSE stream and the rendered message: the LLM
-    // often bursts its tokens after thinking, so instead of patching text in
-    // as fast as it arrives, reveal it at a readable typing rate. The rate
-    // adapts to the backlog so long answers do not drag.
-    let target = "";
-    let revealed = 0;
-    let revealTimer: number | null = null;
-    const stopReveal = () => {
-      if (revealTimer !== null) {
-        window.clearInterval(revealTimer);
-        revealTimer = null;
-      }
-    };
-    const startReveal = () => {
-      if (revealTimer !== null) return;
-      revealTimer = window.setInterval(() => {
-        if (revealed >= target.length) {
-          stopReveal();
-          return;
-        }
-        const backlog = target.length - revealed;
-        revealed = Math.min(target.length, revealed + Math.max(1, Math.round(backlog / 60)));
-        const text = target.slice(0, revealed);
-        patch((m) => ({ ...m, content: text }));
-      }, 16);
-    };
-
     try {
       const result = await askBallastStream(trimmed, {
         onStage: (s) => setStage(STAGE_LABELS[s] ?? STAGE_LABELS.writing_sql),
@@ -406,26 +379,13 @@ export function ChatView() {
           setStage(STAGE_LABELS.composing);
         },
         onToken: (t) => {
-          target += t;
+          partial.answer += t;
           ensureMessage();
           setStage(null);
-          startReveal();
+          patch((m) => ({ ...m, content: partial.answer }));
         },
       });
-      // Type out whatever is still unrevealed (this also animates the
-      // non-streaming fallback, where the whole answer lands at once).
-      target = result.answer;
       ensureMessage();
-      setStage(null);
-      startReveal();
-      await new Promise<void>((resolve) => {
-        const wait = window.setInterval(() => {
-          if (revealed >= target.length) {
-            window.clearInterval(wait);
-            resolve();
-          }
-        }, 32);
-      });
       patch((m) => ({
         ...m,
         content: result.answer,
@@ -435,8 +395,7 @@ export function ChatView() {
     } catch (err) {
       const detail = `The query service did not answer: ${err instanceof Error ? err.message : String(err)}. Start it with "python server/run_local.py" and try again.`;
       if (appended) {
-        const partialText = target.slice(0, revealed);
-        patch((m) => ({ ...m, content: partialText || detail, error: !partialText }));
+        patch((m) => ({ ...m, content: m.content || detail, error: !m.content }));
       } else {
         setMessages((prev) => [
           ...prev,
@@ -444,7 +403,6 @@ export function ChatView() {
         ]);
       }
     } finally {
-      stopReveal();
       setIsThinking(false);
       setStage(null);
       setStreamingId(null);
