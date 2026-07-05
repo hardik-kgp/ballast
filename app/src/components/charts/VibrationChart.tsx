@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import {
   Area,
   ComposedChart,
@@ -30,8 +31,47 @@ const TooltipContent = buildTooltip((name, value) => {
   return null;
 });
 
-export function VibrationChart({ height = 260 }: { height?: number }) {
-  const data = useLiveSeries(FEED.vibrationTrend, resampleVibration);
+export function VibrationChart({
+  height = 260,
+  incidentActive = false,
+  onDanger,
+}: {
+  height?: number;
+  /** When true, drive a live climb that crosses the danger band (demo incident). */
+  incidentActive?: boolean;
+  /** Fired once when the live value crosses the ISO 10816 danger threshold. */
+  onDanger?: () => void;
+}) {
+  const idle = useLiveSeries(FEED.vibrationTrend, resampleVibration);
+  const [incidentPoints, setIncidentPoints] = useState<VibrationPoint[]>([]);
+  const onDangerRef = useRef(onDanger);
+  onDangerRef.current = onDanger;
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    if (!incidentActive) {
+      setIncidentPoints([]);
+      firedRef.current = false;
+      return;
+    }
+    const start = FEED.vibrationTrend[FEED.vibrationTrend.length - 1]?.vibMmS ?? 6;
+    let v = start;
+    let i = 0;
+    const id = window.setInterval(() => {
+      i += 1;
+      v = Math.min(7.9, v + 0.18 + Math.random() * 0.05);
+      const vibMmS = Math.round(v * 100) / 100;
+      setIncidentPoints((prev) => [...prev, { date: `+${i}m`, vibMmS }]);
+      if (vibMmS >= FEED.meta.vibDanger && !firedRef.current) {
+        firedRef.current = true;
+        onDangerRef.current?.();
+      }
+      if (v >= 7.85) window.clearInterval(id);
+    }, 700);
+    return () => window.clearInterval(id);
+  }, [incidentActive]);
+
+  const data = incidentActive ? [...FEED.vibrationTrend, ...incidentPoints] : idle;
   return (
     <div>
       <ResponsiveContainer width="100%" height={height}>

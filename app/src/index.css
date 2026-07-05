@@ -27,7 +27,7 @@
     --chart-4: 262 60% 52%;
     --chart-5: 347 77% 50%;
     --chart-grid: 220 13% 91%;
-    --radius: 0.625rem;
+    --radius: 0.5rem;
   }
 
   * {
@@ -38,7 +38,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   body {

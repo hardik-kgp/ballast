@@ -8,7 +8,7 @@ export default {
     extend: {
       fontFamily: {
         sans: [
-          "Inter",
+          "IBM Plex Sans",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
@@ -17,7 +17,7 @@ export default {
           "sans-serif",
         ],
         mono: [
-          "JetBrains Mono",
+          "IBM Plex Mono",
           "ui-monospace",
           "SFMono-Regular",
           "Menlo",

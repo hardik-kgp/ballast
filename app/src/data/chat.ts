@@ -15,12 +15,19 @@ export interface ChatArtifact {
   footnote: string;
 }
 
+export interface ManualCitation {
+  title: string;
+  section: string;
+  file: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   artifact?: ChatArtifact;
   highlights?: string[];
+  citations?: ManualCitation[];
 }
 
 const pred = FEED.prediction;
@@ -49,7 +56,7 @@ export const SEED_MESSAGES: ChatMessage[] = [
     id: "m2",
     role: "assistant",
     content:
-      `Boiler Feed Pump 2A on ${pred?.unitId ?? "VSTPS-U3"} is at ${vibNow.toFixed(1)} mm/s, up from a ${vibBase.toFixed(1)} mm/s baseline over five weeks, and the model projects failure around ${pred?.predictedFailureDate ?? ""} (${pred?.confidencePct ?? 0}% confidence, about ${Math.round(pred?.rulDays ?? 0)} days of remaining life). The exposure is severe because the standby pump BFP-2C is out on an in-progress overhaul and the spare thrust bearing (${spare?.partId ?? ""}) is out of stock with a ${spare?.leadTimeDays ?? 0}-day lead; the incoming PO lands ${spare?.poEta ?? ""}, likely too late. If 2A trips, the unit derates below its NAPAF availability floor and the combined capacity-charge under-recovery, DSM penalty and exchange replacement power comes to \u20B9${pred?.rupeesAtRiskCr ?? 0} Cr.`,
+      `Boiler Feed Pump 2A on ${pred?.unitId ?? "VSTPS-U3"} is at ${vibNow.toFixed(1)} mm/s, up from a ${vibBase.toFixed(1)} mm/s baseline over five weeks, and the model projects failure around ${pred?.predictedFailureDate ?? ""} (${pred?.confidencePct ?? 0}% confidence, about ${Math.round(pred?.rulDays ?? 0)} days of remaining life). The exposure is severe because the standby pump BFP-2C is out on an in-progress overhaul and the spare thrust bearing (${spare?.partId ?? ""}) is out of stock with a ${spare?.leadTimeDays ?? 0}-day lead; the incoming PO lands ${spare?.poEta ?? ""}, likely too late. If 2A trips, the unit derates below its NAPAF availability floor and the combined capacity-charge under-recovery, DSM penalty and exchange replacement power comes to \u20B9${pred?.rupeesAtRiskCr ?? 0} Cr. This matches the BFP O&M Manual bearing-failure playbook (Section 5), which calls for a controlled derate when no healthy standby is available rather than risking an uncontrolled trip.`,
     highlights: [
       `Vibration ${vibNow.toFixed(1)} mm/s, alert band ${FEED.meta.vibAlert}, danger ${FEED.meta.vibDanger} (ISO 10816)`,
       `Standby BFP-2C unavailable, spare bearing 0 on hand, ${spare?.leadTimeDays ?? 0}d lead`,
@@ -63,6 +70,18 @@ export const SEED_MESSAGES: ChatMessage[] = [
       chart: "vibration_trend",
       footnote: "Source: condition_monitoring, equip VSTPS-U3-BFP-A, daily mean of hourly records",
     },
+    citations: [
+      {
+        title: "BFP O&M Manual",
+        section: "§2 Vibration limits · §5 Bearing-failure playbook",
+        file: "manuals/BFP-OM-Manual.pdf",
+      },
+      {
+        title: "CBM Vibration SOP",
+        section: "ISO 10816 alert/danger bands + escalation",
+        file: "manuals/CBM-Vibration-SOP.pdf",
+      },
+    ],
   },
   {
     id: "m3",

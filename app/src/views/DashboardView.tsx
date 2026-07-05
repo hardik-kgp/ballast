@@ -1,5 +1,18 @@
-import { ArrowDownRight, ArrowUpRight, Flame, Gauge, IndianRupee, Zap } from "lucide-react";
+import { useState } from "react";
+import {
+  AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
+  Flame,
+  Gauge,
+  IndianRupee,
+  Play,
+  ShieldAlert,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MitigationDialog } from "@/components/MitigationDialog";
 import { useLiveFeed, type LiveUnit } from "@/hooks/useLiveFeed";
 import { Card, CardHeader, Dot, Pill } from "@/components/ui/Card";
 import {
@@ -14,6 +27,21 @@ import { FEED, type UnitStatus } from "@/data/feed";
 import { formatMW } from "@/lib/format";
 
 const pred = FEED.prediction;
+
+// "Run closer to capacity": health-verified units can declare more DC without
+// adding trip risk. Conservative incremental capacity-charge recovery estimate.
+const RATE_PER_MW_DAY = 8000; // Rs / MW / day (Ballast estimate)
+const HEADROOM = (() => {
+  const eligible = FEED.units.filter((u) => u.status === "nominal" && u.healthIndex >= 80);
+  const rows = eligible.map((u) => {
+    const current = Math.round(u.capacityMw * 0.9);
+    const safe = Math.round(u.capacityMw * 0.97);
+    return { unitId: u.unitId, current, safe, headroom: Math.max(0, safe - current) };
+  });
+  const totalMw = rows.reduce((s, r) => s + r.headroom, 0);
+  const perQuarterCr = (totalMw * RATE_PER_MW_DAY * 90) / 1e7;
+  return { rows, totalMw, perQuarterCr };
+})();
 
 const STATIC_KPIS = [
   {
@@ -126,6 +154,9 @@ function UnitCard({ unit }: { unit: LiveUnit }) {
 
 export function DashboardView() {
   const live = useLiveFeed();
+  const [incident, setIncident] = useState(false);
+  const [danger, setDanger] = useState(false);
+  const [mitigationOpen, setMitigationOpen] = useState(false);
 
   const kpis = [
     {
@@ -219,7 +250,7 @@ export function DashboardView() {
             <GenerationChart height={272} />
           </div>
         </Card>
-        <Card className="pb-4 xl:col-span-2">
+        <Card className={cn("pb-4 xl:col-span-2", danger && "border-rose-300")}>
           <CardHeader
             title={pred ? `${pred.equipName} vibration` : "Vibration trend"}
             subtitle={
@@ -228,19 +259,93 @@ export function DashboardView() {
                 : "No active prediction"
             }
             right={
-              pred ? (
-                <Pill tone="danger">
-                  <Dot className="bg-rose-500 animate-pulse-dot" />
-                  {"\u20B9"}{pred.rupeesAtRiskCr} Cr
+              !incident ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDanger(false);
+                    setIncident(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border-strong bg-surface px-2.5 py-1.5 text-[11.5px] font-medium text-text-muted transition-colors hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <Play className="h-3.5 w-3.5" aria-hidden="true" />
+                  Simulate live
+                </button>
+              ) : danger ? (
+                <button
+                  type="button"
+                  onClick={() => setMitigationOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-rose-600 px-3 py-1.5 text-[11.5px] font-semibold text-white transition-colors hover:bg-rose-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <ShieldAlert className="h-3.5 w-3.5" aria-hidden="true" />
+                  Respond
+                </button>
+              ) : (
+                <Pill tone="warning">
+                  <Dot className="bg-amber-500 animate-pulse-dot" />
+                  climbing...
                 </Pill>
-              ) : undefined
+              )
             }
           />
+          {danger ? (
+            <div className="mx-4 mt-1 flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[12.5px] font-medium text-rose-700">
+              <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+              BFP-2A crossed the ISO 10816 danger line (7.1 mm/s)
+              {pred ? ` · ₹${pred.rupeesAtRiskCr} Cr at risk` : ""}. Mitigation available.
+            </div>
+          ) : null}
           <div className="px-4 pt-2">
-            <VibrationChart height={272} />
+            <VibrationChart height={272} incidentActive={incident} onDanger={() => setDanger(true)} />
           </div>
         </Card>
       </div>
+
+      {HEADROOM.totalMw > 0 ? (
+        <div className="animate-fade-up" style={{ animationDelay: "150ms" }}>
+          <Card className="px-5 py-4">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                  <h3 className="heading-tight text-[15px] font-semibold text-text">
+                    Capacity headroom
+                  </h3>
+                  <Pill tone="success">run closer to capacity</Pill>
+                </div>
+                <p className="mt-1 max-w-[580px] text-[13px] text-text-muted">
+                  Health-verified units can declare more capacity without adding trip risk. Ballast
+                  surfaces the safe headroom you are leaving on the table.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {HEADROOM.rows.map((r) => (
+                    <span
+                      key={r.unitId}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface-raised px-2.5 py-1.5 text-[12px]"
+                    >
+                      <span className="font-medium text-text">{r.unitId}</span>
+                      <span className="tabular text-text-subtle">
+                        {r.current}&rarr;{r.safe} MW
+                      </span>
+                      <span className="tabular font-semibold text-emerald-700">+{r.headroom}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="tabular text-[26px] font-semibold text-emerald-700">
+                  +{HEADROOM.totalMw} MW
+                </p>
+                <p className="text-[12px] text-text-subtle">safe to declare now</p>
+                <p className="mt-1.5 tabular text-[13px] font-medium text-text">
+                  &asymp; {"₹"}{HEADROOM.perQuarterCr.toFixed(1)} Cr / quarter
+                </p>
+                <p className="text-[11px] text-text-subtle">added recovery (est.)</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      ) : null}
 
       <div className="animate-fade-up" style={{ animationDelay: "180ms" }}>
         <div className="mb-3 flex items-center justify-between">
@@ -276,6 +381,8 @@ export function DashboardView() {
           </div>
         </Card>
       </div>
+
+      <MitigationDialog open={mitigationOpen} onClose={() => setMitigationOpen(false)} />
     </div>
   );
 }

@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Card, Dot } from "@/components/ui/Card";
 import { timeAgo } from "@/lib/format";
+import { MitigationDialog } from "@/components/MitigationDialog";
 import { ALERTS, type AlertKind, type AlertSeverity, type PlantAlert } from "@/data/alerts";
 
 const SEVERITY_META: Record<AlertSeverity, { label: string; className: string; dot: string }> = {
@@ -85,7 +86,7 @@ function SeverityPill({ severity }: { severity: AlertSeverity }) {
   );
 }
 
-function AlertCard({ alert }: { alert: PlantAlert }) {
+function AlertCard({ alert, onReview }: { alert: PlantAlert; onReview: () => void }) {
   const KindIcon = KIND_META[alert.kind].icon;
   return (
     <Card
@@ -142,6 +143,7 @@ function AlertCard({ alert }: { alert: PlantAlert }) {
           </div>
           <button
             type="button"
+            onClick={onReview}
             className="ml-auto inline-flex shrink-0 items-center gap-1 self-center rounded-md border border-border-strong bg-surface px-3 py-1.5 text-xs font-medium text-text transition-colors duration-150 hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Review
@@ -155,6 +157,7 @@ function AlertCard({ alert }: { alert: PlantAlert }) {
 
 export function AlertsView() {
   const [filter, setFilter] = useState<FilterKey>("all");
+  const [mitigationOpen, setMitigationOpen] = useState(false);
 
   const filtered = useMemo(
     () =>
@@ -211,7 +214,7 @@ export function AlertsView() {
             className="animate-fade-up"
             style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
           >
-            <AlertCard alert={alert} />
+            <AlertCard alert={alert} onReview={() => setMitigationOpen(true)} />
           </div>
         ))}
         {filtered.length === 0 ? (
@@ -224,6 +227,8 @@ export function AlertsView() {
           </Card>
         ) : null}
       </div>
+
+      <MitigationDialog open={mitigationOpen} onClose={() => setMitigationOpen(false)} />
     </div>
   );
 }

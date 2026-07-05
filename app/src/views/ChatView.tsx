@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowUp, BarChart3, Download, PanelRightOpen, Sparkles, Table2 } from "lucide-react";
+import { ArrowUp, BarChart3, Download, FileText, PanelRightOpen, Sparkles, Table2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChartById } from "@/components/charts";
 import { DynamicChart } from "@/components/charts/DynamicChart";
@@ -220,6 +220,29 @@ function MessageBubble({
         {message.artifact ? (
           <ScriptedArtifactCard artifact={message.artifact} onOpenPanel={onOpenPanel} />
         ) : null}
+        {message.citations?.length ? (
+          <div className="mt-3">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-text-subtle">
+              Grounded in your manuals
+            </p>
+            <div className="mt-1.5 flex flex-wrap gap-2">
+              {message.citations.map((c) => (
+                <a
+                  key={c.file}
+                  href={`/${c.file}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={`${c.title} — ${c.section}`}
+                  className="group inline-flex max-w-full items-center gap-1.5 rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs text-text-muted transition-colors hover:border-border-strong hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <FileText className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden="true" />
+                  <span className="font-medium text-text">{c.title}</span>
+                  <span className="truncate text-text-subtle">· {c.section}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -254,9 +277,16 @@ export function ChatView() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const [hasInteracted, setHasInteracted] = useState(false);
+  // Land on the hero exchange (top) on first paint.
   useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, []);
+  // Only follow the conversation to the bottom once the user has asked something.
+  useEffect(() => {
+    if (!hasInteracted) return;
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, isThinking]);
+  }, [messages, isThinking, hasInteracted]);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -269,6 +299,7 @@ export function ChatView() {
     const trimmed = text.trim();
     if (!trimmed || isThinking) return;
     setDraft("");
+    setHasInteracted(true);
     lastQuestion.current = trimmed;
     setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: "user", content: trimmed }]);
     setIsThinking(true);

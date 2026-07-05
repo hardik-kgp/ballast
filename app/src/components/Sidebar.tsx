@@ -136,6 +136,9 @@ export function Sidebar({
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse-dot" />
             Telemetry live
           </p>
+          <p className="mt-3 border-t border-border pt-2.5 text-[10.5px] text-text-subtle">
+            Powered by <span className="font-medium text-text-muted">Ballast</span>
+          </p>
         </div>
       ) : null}
     </aside>
