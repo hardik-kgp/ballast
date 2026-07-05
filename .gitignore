@@ -16,3 +16,6 @@ venv/
 .idea/
 .vscode/
 *.swp
+
+# Demo recordings (regenerate with: node app/scripts/record_demo.mjs)
+demo/

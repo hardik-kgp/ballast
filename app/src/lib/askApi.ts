@@ -153,7 +153,12 @@ export async function askBallastStream(
       buffer = buffer.slice(sep + 2);
       sep = buffer.indexOf("\n\n");
     }
-    if (streamError) break;
+    // The done/error frame is terminal; do not wait for connection EOF, which
+    // some proxies hold open and would leave the composer locked.
+    if (done || streamError) {
+      void reader.cancel().catch(() => {});
+      break;
+    }
   }
   if (buffer.trim()) handleFrame(buffer);
 
